@@ -1,0 +1,4 @@
+dataclasses
+elasticsearch
+requests
+django
