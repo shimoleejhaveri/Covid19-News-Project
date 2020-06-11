@@ -9,3 +9,6 @@ covidNews/.DS_Store
 /covidNews/searchNews/.DS_Store
 /covidNews/searchNews/__pycache__/
 /covidNews/searchNews/migrations/__pycache__/
+.DS_Store
+covidNews/.DS_Store
+/covidNews/covidNews/__pycache__/
