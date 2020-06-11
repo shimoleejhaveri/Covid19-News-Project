@@ -1,3 +1,9 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from searchNews.documents import addarticle
 
-# Create your views here.
+def searchForNews(request):
+    
+    res = addarticle()
+    return HttpResponse(res)
+
