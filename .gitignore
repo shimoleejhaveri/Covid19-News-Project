@@ -2,3 +2,7 @@
 /covidNews/.DS_Store
 /.DS_Store
 secrets.sh
+covidNews/covidNews/__pycache__
+covidNews/covidNews/__pycache__/
+covidNews/.DS_Store
+/covidNews/covidNews/__pycache__
