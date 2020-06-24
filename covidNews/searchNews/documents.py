@@ -57,7 +57,6 @@ def addarticle():
 
 
 
-
     # extractor = Goose()
     # article = extractor.extract(url='https://cebudailynews.inquirer.net/318072/cebuano-visual-artist-produces-fashionable-turbans-to-raise-funds-for-covid-19-frontliners')
     # print(article.title)
