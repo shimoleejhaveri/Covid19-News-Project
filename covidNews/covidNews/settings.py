@@ -121,4 +121,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CRONJOBS = [('0 7 * * *','searchNews.cron.callapi()')]
+CRONJOBS = [('0 23 * * *','searchNews.cron.callapi()')]
