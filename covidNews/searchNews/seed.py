@@ -1,4 +1,4 @@
-'''Covid News'''
+'''Feed Covid News'''
 
 from elasticsearch import Elasticsearch
 import requests
@@ -41,48 +41,47 @@ def feedEs():
     for i in range(1,number_days+1):
         search_date = str((lastMonth + timedelta(days=i)).date())  
         response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from="+search_date+"&to="+search_date+"&sortBy=publishedAt&pageSize=20&language=en&apiKey="+key)).json()
-        # http://newsapi.org/v2/everything?q=Covid&from=2020-05-25&to=2020-05-29&sortBy=publishedAt&pageSize=50&language=en&apiKey=ca13cbd006dd4c4eb90c3cafd026768e
-        dic_articles={}
+        dic_article={}
         extractor = Goose()
 
         for article in response["articles"]:
             try:
                 if article["source"]["name"] != "null":
-                    dic_articles["source_name"] = article["source"]["name"]
+                    dic_article["source_name"] = article["source"]["name"]
 
                 if article["description"] != "null":
-                    dic_articles["description"] = article["description"]
+                    dic_article["description"] = article["description"]
 
                 if article["author"] != "null":
-                    dic_articles["author"] = article["author"]
+                    dic_article["author"] = article["author"]
 
                 if article["title"] != "null":
-                    dic_articles["title"] = article["title"]
+                    dic_article["title"] = article["title"]
 
                 if article["url"] != "null":
                     print(article["url"])
                     request = requests.get(article["url"])
                     # check if the url is valid
                     if request.status_code == 200:
-                        dic_articles["url"] = article["url"]
+                        dic_article["url"] = article["url"]
                     else:
                         continue
 
                 if article["publishedAt"] != "null":
                     # publishedAt': '2020-06-18T22:24:00Z
-                    dic_articles["publishedAt"] = get_date(article["publishedAt"])
-                    dic_articles["timeAt"] = get_time(article["publishedAt"])
+                    dic_article["publishedAt"] = get_date(article["publishedAt"])
+                    dic_article["timeAt"] = get_time(article["publishedAt"])
 
                 # extract the article from its URL
                 extracted_article = extractor.extract(url=article["url"])
                 text = extracted_article.cleaned_text[:10000]
-                dic_articles["content"] = text
+                dic_article["content"] = text
 
                 # get the new id
                 new_id = uuid.uuid4()
 
                 # add to elasticsearch
-                a = es.index(index="news-articles", id=new_id, body=dic_articles)
+                a = es.index(index="news-articles", id=new_id, body=dic_article)
             except:
                 continue
 
