@@ -4,20 +4,26 @@ from elasticsearch import Elasticsearch
 import requests
 from dataclasses import dataclass
 import json
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from os import environ
 from goose3 import Goose
 from requests import get
+import uuid
+import dateutil.relativedelta
 
 def addarticle():
     key=environ.get('API_KEY')
+    print(key)
     ip=environ.get('IP')
+    print(ip)
     
-    searchtopic="Covid_19"
+    search_topic="Covid_19"
     search_date="2020-06-11"
     
     response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-06-11&sortBy=publishedAt&language=en&apiKey="+key)).json()
+    # print(response['status'])
     es=Elasticsearch(["http://"+ip])
+    print(es)
     es.indices.create(index='news-articles', ignore=400)
     dic_articles={}
     extractor = Goose()
@@ -55,18 +61,8 @@ def addarticle():
     #return the content of the the checked document 
     return b["content"]
 
+addarticle()
 
-
-    # extractor = Goose()
-    # article = extractor.extract(url='https://cebudailynews.inquirer.net/318072/cebuano-visual-artist-produces-fashionable-turbans-to-raise-funds-for-covid-19-frontliners')
-    # print(article.title)
-    # text=article.cleaned_text[:10000]
-
-    
-    
-    # es.indices.create(index='my-articles', ignore=400)
-    # a = es.index(index="my-articles", id=1, body={"any": "data", "timestamp": datetime.now()})
-    # b = es.get(index="my-articles", id=1)['_source']
-    # print(b)
-    
-
+def sentAnalysis():
+    return "the code goes here"
+# >>>>>>> fc9ce8379097574b545abeeb49d990a7983079f0
