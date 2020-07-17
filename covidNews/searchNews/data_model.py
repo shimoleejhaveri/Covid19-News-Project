@@ -6,14 +6,12 @@ from tweepy.streaming import StreamListener
 import json
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-# import emoji
 import pandas as pd
 import csv
 import re #regular expression
 from textblob import TextBlob
 import string
 import preprocessor as p
-
 
 consumer_key = os.environ.get('TWITTER_API_KEY')
 consumer_secret = os.environ.get('TWITTER_SECRET_KEY')
@@ -25,13 +23,11 @@ auth.set_access_token(access_token, access_secret)
 api = API(auth)
 print(api)
 
-
 # search_words=["covid19","covid-19","coronavirus"] 
 search_words = ['covid19', 'covid-19', 'coronavirus']
 #  date_since = "2020-05-21"  
 date_since='2020-05-21'
 tweets = Cursor(api.search, 'covid-19', lang="en", since=date_since, include_rts=False).items(10)
-print('\n\n\n\n\n', tweets)
 
 #HappyEmoticons
 emoticons_happy = set([
@@ -111,7 +107,7 @@ for tweet in tweets:
 
 
 def create_csv_file():
-	# with open('news.csv', 'w') as csvfile: 
+
 	with open('news.csv', 'w') as csvfile:
 		filewriter = csv.writer(csvfile, delimiter=',', 
 										quotechar='|', 
