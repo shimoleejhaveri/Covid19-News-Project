@@ -5,25 +5,27 @@ import requests
 from dataclasses import dataclass
 import json
 from datetime import datetime, date, timedelta
-from os import environ
+import os
+# from os import environ
 from goose3 import Goose
 from requests import get
 import uuid
 import dateutil.relativedelta
 
 def addarticle():
-    key=environ.get('API_KEY')
-    print(key)
-    ip=environ.get('IP')
+    key=os.environ.get('API_KEY')
+    # print(key)
+    ip=os.environ.get('IP')
     print(ip)
     
     search_topic="Covid_19"
-    search_date="2020-06-11"
+    search_date="2020-07-23" ## write fn to get current date
     
-    response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-06-11&sortBy=publishedAt&language=en&apiKey="+key)).json()
+    response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-06-24&sortBy=publishedAt&language=en&apiKey="+key)).json()
+    # print("\n\n\n\n", response)
     # print(response['status'])
     es=Elasticsearch(["http://"+ip])
-    print(es)
+    # print("\n\n\n\n", es)
     es.indices.create(index='news-articles', ignore=400)
     dic_articles={}
     extractor = Goose()
@@ -56,13 +58,13 @@ def addarticle():
         a = es.index(index="news-articles", id=i, body=dic_articles)
     #test if we saved in the created index a document that has the id 3 
     b = es.get(index="news-articles", id=3)['_source']
-    print(b)
+    # print(b)
 
     #return the content of the the checked document 
     return b["content"]
 
 addarticle()
 
-def sentAnalysis():
-    return "the code goes here"
-# >>>>>>> fc9ce8379097574b545abeeb49d990a7983079f0
+# def sentAnalysis():
+#     return "the code goes here"
+

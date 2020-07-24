@@ -18,5 +18,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.searchForNews),
+    path("", views.home, name='news-home'),
+    # path("", views.searchForNews),
 ]
