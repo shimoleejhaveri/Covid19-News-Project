@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pandas as pd
 import csv
-import re #regular expression
+import re
 from textblob import TextBlob
 import string
 import preprocessor as p
@@ -23,10 +23,8 @@ auth.set_access_token(access_token, access_secret)
 api = API(auth)
 print(api)
 
-# search_words=["covid19","covid-19","coronavirus"] 
 search_words = ['covid19', 'covid-19', 'coronavirus']
-#  date_since = "2020-05-21"  
-date_since='2020-05-21'
+date_since = '2020-05-21'
 tweets = Cursor(api.search, 'covid-19', lang="en", since=date_since, include_rts=False).items(10)
 
 #HappyEmoticons
@@ -60,7 +58,6 @@ emoticons = emoticons_happy.union(emoticons_sad)
 
 def clean_tweets(tweet):
 	stop_words = set(stopwords.words('english'))
-	# print('\n\n\n\n\n', tweet._json['text'])
 	
 	word_tokens = word_tokenize(tweet)
 	#after tweepy preprocessing the colon symbol left remain after      #removing mentions
@@ -78,9 +75,8 @@ def clean_tweets(tweet):
 		if w not in stop_words and w not in emoticons and w not in string.punctuation:
 			filtered_tweet.append(w)
 	return ' '.join(filtered_tweet)
-	#print(word_tokens)
-	#print(filtered_sentence)return tweet
 
+	
 def sentiment_analysis(filtered_tweet):
 	blob = TextBlob(filtered_tweet)
 	sentiment = blob.sentiment
@@ -94,16 +90,17 @@ def sentiment_analysis(filtered_tweet):
         else:
             return 'negative'
 
+
 def add_tweet(filtered_tweet, sentiment):
 	created_at = clean_tweets(tweet._json['created_at'])
 	source = clean_tweets(tweet._json['source'])
 
-for tweet in tweets:
-	filtered_tweet = clean_tweets(tweet._json['text'])
-	print(filtered_tweet)
-	sentiment = sentiment_analysis(filtered_tweet)
-	print(sentiment)
-	add_tweet(filtered_tweet, sentiment)
+	for tweet in tweets:
+		filtered_tweet = clean_tweets(tweet._json['text'])
+		print(filtered_tweet)
+		sentiment = sentiment_analysis(filtered_tweet)
+		print(sentiment)
+		add_tweet(filtered_tweet, sentiment)
 
 
 def create_csv_file():

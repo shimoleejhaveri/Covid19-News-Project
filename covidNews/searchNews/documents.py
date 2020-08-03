@@ -6,26 +6,21 @@ from dataclasses import dataclass
 import json
 from datetime import datetime, date, timedelta
 import os
-# from os import environ
 from goose3 import Goose
 from requests import get
 import uuid
 import dateutil.relativedelta
 
+key=os.environ.get('API_KEY')
+ip=os.environ.get('IP')
+
 def addarticle():
-    key=os.environ.get('API_KEY')
-    # print(key)
-    ip=os.environ.get('IP')
-    print(ip)
     
     search_topic="Covid_19"
-    search_date="2020-07-23" ## write fn to get current date
+    search_date="2020-08-03" ## write fn to get current date
     
-    response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-06-24&sortBy=publishedAt&language=en&apiKey="+key)).json()
-    # print("\n\n\n\n", response)
-    # print(response['status'])
+    response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-08-03&sortBy=publishedAt&language=en&apiKey="+key)).json()
     es=Elasticsearch(["http://"+ip])
-    # print("\n\n\n\n", es)
     es.indices.create(index='news-articles', ignore=400)
     dic_articles={}
     extractor = Goose()
@@ -63,8 +58,25 @@ def addarticle():
     #return the content of the the checked document 
     return b["content"]
 
-addarticle()
 
-# def sentAnalysis():
-#     return "the code goes here"
+def displayNews():
 
+    payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
+
+    url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
+  
+    articles = url["articles"]
+    article_list = []
+      
+    for article in articles:
+
+        article_dict = {'source': article["source"],
+                        'title': article["title"],
+                        'description': article["description"],
+                        'url': article["url"],
+                        'url_img': article["urlToImage"],
+                        'publication_date': article["publishedAt"][:10]}
+          
+        article_list.append(article_dict)
+
+    return article_list

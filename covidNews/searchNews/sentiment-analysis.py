@@ -4,15 +4,12 @@ import json
 from os import environ
 import nltk
 import string
-# from nltk import word_tokenize
-# from nltk.corpus import stopwords
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize 
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import TreebankWordTokenizer 
 from nltk.tokenize import RegexpTokenizer 
 from nltk.stem.porter import PorterStemmer
-# import inflect
 from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
@@ -25,34 +22,27 @@ from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import re
-# import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 import numpy as np 
 
 import csv
-global str
-
 
 def vaderSent_classification(text):
     '''get the score'''
 
     analyser = SentimentIntensityAnalyzer()
     vs = analyser.polarity_scores(text)
-
     return vs
 
 
 def textblob_classification(text):
 
     blob = TextBlob(text)
-
     return blob.sentiment
 
 
-
 def clean_text(text):
-    # nltk.download('all')
-    # lowercase
+    
     text = text.lower()
 
     # convert numbers into words
