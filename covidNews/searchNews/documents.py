@@ -34,7 +34,7 @@ def dailySentAnalysis():
             articles[key] = [{'description':article['_source']['description'],
                         'sentiment':article['_source']['sentiment']}]
 
-    print(articles.keys())
+
     return articles
 
 def sentAnalysis():
@@ -76,7 +76,7 @@ def sentAnalysis():
         except:
             continue
       
-    return [{'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}]
+    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
 
 def displayNews():
 
