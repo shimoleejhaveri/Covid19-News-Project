@@ -76,7 +76,7 @@ def sentAnalysis():
         except:
             continue
       
-    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
+    return [{'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}]
 
 def displayNews():
 
