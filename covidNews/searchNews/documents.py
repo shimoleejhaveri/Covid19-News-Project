@@ -53,15 +53,15 @@ def addarticle():
         a = es.index(index="news-articles", id=i, body=dic_articles)
     #test if we saved in the created index a document that has the id 3 
     b = es.get(index="news-articles", id=3)['_source']
-    # print(b)
+    print(b)
 
     #return the content of the the checked document 
     return b["content"]
-
+addarticle()
 
 def displayNews():
 
-    payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
+    payload = {"q": "Covid", "sortBy": "publishedAt", "language": "en", "apiKey": key}
 
     url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
   

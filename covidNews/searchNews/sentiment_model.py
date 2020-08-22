@@ -4,13 +4,12 @@ import csv
 import pandas as pd
 import numpy as np
 from scipy.stats import randint
-import seaborn as sns # used for plot interactive graph. 
+import seaborn as sns
 import matplotlib.pyplot as plt
 import seaborn as sns
 from io import StringIO
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import chi2
-# from IPython.display import display
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
@@ -20,9 +19,6 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
-#import warnings
-#warnings.filterwarnings("ignore", category=FutureWarning)
-
 
 # loading data
 data = pd.read_csv("news.csv", delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
@@ -129,10 +125,6 @@ acc = pd.concat([mean_accuracy, std_accuracy], axis= 1,
           ignore_index=True)
 acc.columns = ['Mean Accuracy', 'Standard deviation']
 print(acc)
-
-
-
-
 
 plt.figure(figsize=(8,5))
 sns.boxplot(x='model_name', y='accuracy', 
