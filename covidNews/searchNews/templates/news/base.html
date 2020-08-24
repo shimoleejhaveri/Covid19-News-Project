@@ -42,7 +42,7 @@
 
     <main role="main" class="container">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <h1>Latest News</h1>
             {% for post in posts %}
                 <article class="media content-section">
@@ -60,16 +60,14 @@
             {% endfor %}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="content-section">
             <h3>Statistics</h3>
-            <p class='text-muted'>You can put any information here you'd like.
+            <p class='text-muted'>News Sentiment in the Time of COVID-19
               <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Chart 1</li>
-                  <div class="col" id="charts">
-                    <script src="/static/news/js/chart.js"></script>
-                  </div>
-                <li class="list-group-item list-group-item-light">Chart 2</li>
+                <script src="/static/news/js/chart.js"></script>
+                <li class="list-group-item list-group-item-light" id="chart1">Chart 1: Statistics of the News Sentiment </li> 
+                <li class="list-group-item list-group-item-light" id="chart2">Chart 2: News Sentiments per day</li>
               </ul>
             </p>
           </div>

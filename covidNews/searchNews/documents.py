@@ -15,7 +15,6 @@ def dailySentAnalysis():
 
     # connect to elasticsearch
     ip = os.environ.get('IP')
-    print(ip)
     es = Elasticsearch(["http://"+ip])
 
     query = {"size": 1000,"query":{"match_all" : {}}}
@@ -25,17 +24,36 @@ def dailySentAnalysis():
         return 0
 
     articles = {}
+
     for article in data['hits']['hits']: 
         key = article['_source']['publishedAt']
-        if key in articles:
-            articles[key].append({'description':article['_source']['description'],
-                        'sentiment':article['_source']['sentiment']})
-        else:
-            articles[key] = [{'description':article['_source']['description'],
-                        'sentiment':article['_source']['sentiment']}]
+        sent = article['_source']['sentiment']
+
+        def add(key, articles, sent):
+            if key in articles:
+                articles[key][sent] += 1
+            else:
+                articles[key] = {'positive':0, 'neutral':0, 'negative':0}
+                articles[key][sent] += 1
+
+            return articles
+   
+        if sent == 1 :
+            add(key, articles, 'negative')
+        if sent == 2 :
+            add(key, articles, 'positive')
+        if sent == 0 :
+            add(key, articles, 'neutral')
 
 
     return articles
+
+    # if key in articles:
+    #     articles[key].append({'description':article['_source']['description'],
+    #                 'sentiment':article['_source']['sentiment']})
+    # else:
+    #     articles[key] = [{'description':article['_source']['description'],
+    #                 'sentiment':article['_source']['sentiment']}]
 
 def sentAnalysis():
     

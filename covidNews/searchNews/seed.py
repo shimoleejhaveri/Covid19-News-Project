@@ -18,6 +18,7 @@ def get_time(date):
 
 def get_date(date):
     # get the date from publishedAt': '2020-06-18T22:24:00Z
+    
     return (date.split('T'))[0]
 
 def callNewsApi(startdate, enddate, key):
