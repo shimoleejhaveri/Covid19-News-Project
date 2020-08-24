@@ -121,4 +121,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CRONJOBS = [('0 23 * * *','searchNews.cron.callapi()')]
+CRONJOBS = [('0 23 * * *','searchNews.cron.callApi', '>>/tmp/scheduled_job.log 2>&1')]
+
+# setup prefix to extract the secrets-specific env variables
+if os.path.exists('searchNews/secrets.sh'):
+    with open('searchNews/secrets.sh') as secret_file:
+        CRONTAB_COMMAND_PREFIX = " ".join([line.replace("export ", "").replace("\n", "") 
+            for line in secret_file.readlines()])
