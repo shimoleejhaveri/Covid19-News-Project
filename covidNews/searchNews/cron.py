@@ -13,7 +13,6 @@ def callApi():
     key=os.environ.get('API_KEY')
     ip=os.environ.get('IP')
 
-    # connect to elasticsearch
     es=Elasticsearch(["http://"+ip])
     print("cron", es.indices.exists(index="news-articles"))
 

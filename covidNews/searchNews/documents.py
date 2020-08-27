@@ -44,19 +44,16 @@ def addarticle():
         if article["publishedAt"] != "null":
             dic_articles["publishedAt"] = article["publishedAt"]
 
-        # extract the article from its URL
         extracted_article = extractor.extract(url=article["url"])
         text = extracted_article.cleaned_text[:10000]
         dic_articles["content"] = text
 
-        # add to elasticsearch
         a = es.index(index="news-articles", id=i, body=dic_articles)
-    #test if we saved in the created index a document that has the id 3 
-    b = es.get(index="news-articles", id=3)['_source']
-    print(b)
 
-    #return the content of the the checked document 
+    b = es.get(index="news-articles", id=3)['_source']
+ 
     return b["content"]
+
 addarticle()
 
 def displayNews():
