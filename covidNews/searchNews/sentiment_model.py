@@ -160,20 +160,3 @@ plt.ylabel('Actual')
 plt.xlabel('Predicted')
 plt.title("CONFUSION MATRIX - LinearSVC\n", size=16)
 
-# plt.savefig('cm.png')
-
-
-# # Let’s have a look at the cases that were wrongly classified.
-# for predicted in category_id_df.category_id:
-#   for actual in category_id_df.category_id:
-#     if predicted != actual and conf_mat[actual, predicted] >= 20:
-#       print("'{}' predicted as '{}' : {} examples.".format(id_to_category[actual], 
-#                                                            id_to_category[predicted], 
-#                                                            conf_mat[actual, predicted]))
-    
-#       display(df1.loc[indices_test[(y_test == actual) & (y_pred == predicted)]][['Sentiment_blob','Content']])
-#       print('')
-
-
-
-

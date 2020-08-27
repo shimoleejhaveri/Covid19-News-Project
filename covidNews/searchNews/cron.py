@@ -1,10 +1,9 @@
+import os
 from elasticsearch import Elasticsearch
 import requests
 from dataclasses import dataclass
 import json
 from datetime import datetime, date
-from os import environ
-from goose3 import Goose
 from requests import get
 import uuid
 from searchNews.seed import addarticles, callNewsApi

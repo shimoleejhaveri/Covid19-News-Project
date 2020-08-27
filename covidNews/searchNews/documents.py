@@ -1,12 +1,12 @@
 '''Covid News'''
-
+import os
 from elasticsearch import Elasticsearch
 import requests
 from dataclasses import dataclass
 import json
 from datetime import datetime, date, timedelta
-import os
 from goose3 import Goose
+from elasticsearch import Elasticsearch
 from requests import get
 import uuid
 import dateutil.relativedelta
@@ -14,51 +14,97 @@ import dateutil.relativedelta
 key=os.environ.get('API_KEY')
 ip=os.environ.get('IP')
 
-def addarticle():
-    
-    search_topic="Covid_19"
-    search_date="2020-08-03" ## write fn to get current date
-    
-    response = (requests.get("http://newsapi.org/v2/everything?q=Covid&from=2020-08-03&sortBy=publishedAt&language=en&apiKey="+key)).json()
-    es=Elasticsearch(["http://"+ip])
-    es.indices.create(index='news-articles', ignore=400)
-    dic_articles={}
-    extractor = Goose()
+def dailySentAnalysis():
 
-    for i, article in enumerate(response["articles"]):
-        if article["source"]["name"] != "null":
-            dic_articles["source_name"] = article["source"]["name"]
+    # connect to elasticsearch
+    ip = os.environ.get('IP')
+    es = Elasticsearch(["http://"+ip])
 
-        if article["description"] != "null":
-            dic_articles["description"] = article["description"]
-
-        if article["author"] != "null":
-            dic_articles["author"] = article["author"]
-
-        if article["title"] != "null":
-            dic_articles["title"] = article["title"]
-
-        if article["url"] != "null":
-            dic_articles["url"] = article["url"]
-
-        if article["publishedAt"] != "null":
-            dic_articles["publishedAt"] = article["publishedAt"]
-
-        extracted_article = extractor.extract(url=article["url"])
-        text = extracted_article.cleaned_text[:10000]
-        dic_articles["content"] = text
-
-        a = es.index(index="news-articles", id=i, body=dic_articles)
-
-    b = es.get(index="news-articles", id=3)['_source']
+    query = {"size": 1000,"query":{"match_all" : {}}}
+    data = es.search(index="news-sentiment", body=query)
  
-    return b["content"]
+    if data['hits']['hits'] == []:
+        return 0
 
-addarticle()
+    articles = {}
+
+    for article in data['hits']['hits']: 
+        key = article['_source']['publishedAt']
+        sent = article['_source']['sentiment']
+
+        def add(key, articles, sent):
+            if key in articles:
+                articles[key][sent] += 1
+            else:
+                articles[key] = {'positive':0, 'neutral':0, 'negative':0}
+                articles[key][sent] += 1
+
+            return articles
+   
+        if sent == 1 :
+            add(key, articles, 'negative')
+        if sent == 2 :
+            add(key, articles, 'positive')
+        if sent == 0 :
+            add(key, articles, 'neutral')
+
+
+    return articles
+
+    # if key in articles:
+    #     articles[key].append({'description':article['_source']['description'],
+    #                 'sentiment':article['_source']['sentiment']})
+    # else:
+    #     articles[key] = [{'description':article['_source']['description'],
+    #                 'sentiment':article['_source']['sentiment']}]
+
+def sentAnalysis():
+    
+    # connect to elasticsearch
+    ip = os.environ.get('IP')
+    print(ip)
+    es = Elasticsearch(["http://"+ip])
+
+    query = {"size": 1000,"query":{"match_all" : {}}}
+    data = es.search(index="news-sentiment", body=query)
+ 
+    if data['hits']['hits'] == []:
+        return 0
+
+    neutral = []    
+    positive = []
+    negative = []
+    # create a dictionary of articles and sentiments 
+    for article in data['hits']['hits']: 
+        try:
+            if article['_source']['sentiment'] == 0:
+                article = {'description':article['_source']['description'],
+                            'publishedAt':article['_source']['publishedAt']
+                }
+                neutral.append(article)
+
+            if article['_source']['sentiment'] == 1:
+                article = {'description':article['_source']['description'],
+                            'publishedAt':article['_source']['publishedAt']
+                }
+                negative.append(article)
+
+            if article['_source']['sentiment'] == 2:
+                article = {'description':article['_source']['description'],
+                            'publishedAt':article['_source']['publishedAt']
+                }
+                positive.append(article)
+        except:
+            continue
+      
+    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
 
 def displayNews():
 
-    payload = {"q": "Covid", "sortBy": "publishedAt", "language": "en", "apiKey": key}
+    key=os.environ.get('API_KEY')
+
+    payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
+
 
     url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
   

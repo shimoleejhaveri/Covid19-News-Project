@@ -1,5 +1,5 @@
 '''Feed Covid News'''
-
+import os
 from elasticsearch import Elasticsearch
 import requests
 from dataclasses import dataclass
@@ -18,12 +18,13 @@ def get_time(date):
 
 def get_date(date):
     # get the date from publishedAt': '2020-06-18T22:24:00Z
+    
     return (date.split('T'))[0]
 
 def callNewsApi(startdate, enddate, key):
     '''call the news api'''
 
-    return (requests.get("http://newsapi.org/v2/everything?q=Covid&from="+startdate+"&to="+enddate+"&sortBy=publishedAt&pageSize=20&language=en&apiKey="+key)).json()
+    return (requests.get("http://newsapi.org/v2/everything?q=Covid+covid-19+coronavirus&sortBy=popularity&from="+startdate+"&to="+enddate+"&pageSize=20&language=en&apiKey="+key)).json()
 
 def extractText(url):
     '''extract text'''
@@ -34,7 +35,7 @@ def extractText(url):
 
     return text
 
-def addarticles(response):
+def addarticles(response, es):
     '''add articles to the Elastcisearch'''
 
     dic_article={}
@@ -53,7 +54,6 @@ def addarticles(response):
                 dic_article["title"] = article["title"]
 
             if article["url"] != "null":
-                print(article["url"])
                 request = requests.get(article["url"])
                 # check if the url is valid
                 if request.status_code == 200:
@@ -63,30 +63,30 @@ def addarticles(response):
 
             if article["publishedAt"] != "null":
                 # publishedAt': '2020-06-18T22:24:00Z
-                dic_article["publishedAt"] = get_date(article["publishedAt"])
-                dic_article["timeAt"] = get_time(article["publishedAt"])
-
+                dic_article["publishedAt"] = str(get_date(article["publishedAt"])).replace(" ", "")
+                dic_article["timeAt"] = str(get_time(article["publishedAt"])).replace(" ", "")
+                
             # extract the article from its URL
             text = extractText(article["url"])
             dic_article["content"] = text
-
+            
             # get the new id
             new_id = uuid.uuid4()
 
             # add to elasticsearch
             a = es.index(index="news-articles", id=new_id, body=dic_article)
-            print('\n\n\n\n\n', "this is a", a)
+
         except:
             continue
 
 def feedEs():
     '''connect to the Elasticsearch, create the index and feed the data to the elasticsearch'''
 
-    key=environ.get('API_KEY')
-    ip=environ.get('IP')
+    key = os.environ.get('API_KEY')
+    ip = os.environ.get('IP')
 
     # connect to elasticsearch
-    es=Elasticsearch(["http://"+ip])
+    es = Elasticsearch(["http://"+ip])
 
     # create an index
     if not es.indices.exists(index="news-articles"):
@@ -100,10 +100,9 @@ def feedEs():
     for i in range(1,number_days+1):
         search_date = str((lastMonth + timedelta(days=i)).date())  
         response = callNewsApi(search_date, search_date, key)
-        addarticles(response)
+        addarticles(response, es)
         
-    return
-
-feedEs()
+if __name__ == "__main__":
+    feedEs()
 
    
