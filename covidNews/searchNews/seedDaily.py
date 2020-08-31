@@ -5,25 +5,21 @@ from elasticsearch import Elasticsearch
 import datetime
 from pytz import timezone
 from prediction import predict_sentiment
-from seed import addarticles, callNewsApi
+from seed import addArticles, callNewsApi
 
+ip = os.environ.get('IP')
+key = os.environ.get('API_KEY')
+
+es = Elasticsearch(["http://"+ip])
+
+tz = timezone("US/Pacific")
+today = str(datetime.datetime.now(tz))[:10]
 
 def seedDaily():
-	# get the ip and the key
-	ip = os.environ.get('IP')
-	key = os.environ.get('API_KEY')
+	'''Seed Elasticsearch database daily with news articles and perform sentiment analysis on them'''
 
-	# connect to elasticsearch
-	es = Elasticsearch(["http://"+ip])
-
-	tz = timezone("US/Pacific")
-	
-	today = str(datetime.datetime.now(tz))[:10]
-	
 	response = callNewsApi(today, key)
-
-	# Add the news to the index
-	addarticles(response, es)
+	addArticles(response, es)
 
 	# predict sentiments 
 	query = {"size": 500,"query":{"match":{"publishedAt": today}}}

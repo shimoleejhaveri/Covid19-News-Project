@@ -73,13 +73,11 @@ def clean_tweets(tweet):
     return ' '.join(filtered_tweet)
     #print(word_tokens)
     #print(filtered_sentence)return tweet
-     
         
 
 def add_tweet(tweet_id, date, tweet, sentiment):
     sentiment = sentiment_analysis(filtered_tweet)
     
-
 def sentiment_analysis(sentiment):
     if float(sentiment) > 0:
         return 'positive'

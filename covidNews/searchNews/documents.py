@@ -107,4 +107,5 @@ def displayNews():
                         'publication_date': article["publishedAt"][:10]}
           
         article_list.append(article_dict)
+    
     return article_list

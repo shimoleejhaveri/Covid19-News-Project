@@ -49,17 +49,17 @@ $.ajax({
     chartsContainer.append(canvas);
 
     list_days = Object.keys(data)
-    list_nember_p = []
-    list_nember_neg = []
-    list_nember_neu = []
+    list_number_pos = []
+    list_number_neg = []
+    list_number_neu = []
 
     for (let day of Object.values(data)) {
-        list_nember_p.push(day.positive)
-        list_nember_neg.push(day.negative)
-        list_nember_neu.push(day.neutral)
+        list_number_pos.push(day.positive)
+        list_number_neg.push(day.negative)
+        list_number_neu.push(day.neutral)
     }
 
-    console.log(list_nember_neu)
+    console.log(list_number_neu)
 
     window.chartColors = {
       red: 'rgb(255, 99, 132)',

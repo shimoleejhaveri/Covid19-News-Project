@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 import requests
 from pytz import timezone
 import datetime
-from seed import addarticles, callNewsApi
+from seed import addArticles, callNewsApi
 from seedDaily import seedDaily
 
 def callApi():
@@ -17,7 +17,7 @@ def callApi():
 	today = str(datetime.datetime.now(tz))[:10]
 	
 	response = callNewsApi(today, key)
-	addarticles(response, es)
+	addArticles(response, es)
 	seedDaily()
 
 	print("END")
