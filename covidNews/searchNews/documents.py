@@ -1,15 +1,11 @@
 '''Covid News'''
+
 import os
 from elasticsearch import Elasticsearch
 import requests
-from dataclasses import dataclass
 import json
-from datetime import datetime, date, timedelta
-from goose3 import Goose
-from elasticsearch import Elasticsearch
-from requests import get
-import uuid
-import dateutil.relativedelta
+from pytz import timezone
+import datetime
 
 key=os.environ.get('API_KEY')
 ip=os.environ.get('IP')
@@ -48,19 +44,7 @@ def dailySentAnalysis():
 
     return articles
 
-    # if key in articles:
-    #     articles[key].append({'description':article['_source']['description'],
-    #                 'sentiment':article['_source']['sentiment']})
-    # else:
-    #     articles[key] = [{'description':article['_source']['description'],
-    #                 'sentiment':article['_source']['sentiment']}]
-
 def sentAnalysis():
-    
-    # connect to elasticsearch
-    # ip = os.environ.get('IP')
-    # print(ip)
-    # es = Elasticsearch(["http://"+ip])
 
     query = {"size": 1000,"query":{"match_all" : {}}}
     data = es.search(index="news-sentiment", body=query)
@@ -71,6 +55,7 @@ def sentAnalysis():
     neutral = []    
     positive = []
     negative = []
+
     # create a dictionary of articles and sentiments 
     for article in data['hits']['hits']: 
         try:
@@ -98,11 +83,14 @@ def sentAnalysis():
 
 def displayNews():
 
-    # key=os.environ.get('API_KEY')
-    # keywords = ['covid-19', 'covid', 'coronavirus']
+    tz = timezone("US/Pacific")
+    today = str(datetime.datetime.now(tz))[:10]
 
-    payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
-
+    payload = {"q": "Covid-19", 
+                "from": today, 
+                "sortBy": "publishedAt", 
+                "language": "en",
+                "apiKey": key}
 
     url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
   
@@ -119,5 +107,4 @@ def displayNews():
                         'publication_date': article["publishedAt"][:10]}
           
         article_list.append(article_dict)
-
     return article_list

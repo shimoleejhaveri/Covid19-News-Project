@@ -21,3 +21,5 @@ def callApi():
 	seedDaily()
 
 	print("END")
+
+callApi()
