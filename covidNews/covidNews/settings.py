@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CRONJOBS = [('0 23 * * *','searchNews.cron.callApi', '>>/tmp/scheduled_job.log 2>&1')]
+CRONJOBS = [('* * * * *','searchNews.cron.callApi', '>>/tmp/scheduled_job.log 2>&1')]
 
 # setup prefix to extract the secrets-specific env variables
 if os.path.exists('searchNews/secrets.sh'):

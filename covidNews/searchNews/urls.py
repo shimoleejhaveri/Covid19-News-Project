@@ -18,7 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("newsBySentiment", views.searchForNews, name='new-sentiment'),
+    path("newsBySentiment", views.searchForNews, name='news-sentiment'),
     path("newsByDate", views.searchForDates, name='news-date'),
     path("", views.viewNews, name='view-news'),
 ]

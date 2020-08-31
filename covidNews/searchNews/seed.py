@@ -11,6 +11,9 @@ from requests import get
 import uuid
 import dateutil.relativedelta
 
+key = os.environ.get('API_KEY')
+ip = os.environ.get('IP')
+
 def get_time(date):
     # get the time from publishedAt': '2020-06-18T22:24:00Z
 
@@ -21,10 +24,22 @@ def get_date(date):
     
     return (date.split('T'))[0]
 
-def callNewsApi(startdate, enddate, key):
+def callNewsApi(startdate, key):
     '''call the news api'''
 
-    return (requests.get("http://newsapi.org/v2/everything?q=Covid+covid-19+coronavirus&sortBy=popularity&from="+startdate+"&to="+enddate+"&pageSize=20&language=en&apiKey="+key)).json()
+    keywords = ['covid-19', 'covid', 'coronavirus']
+
+    url = (('http://newsapi.org/v2/everything?'
+           'q=' + 
+           ' OR '.join(keywords)) +
+           '&from=2020-08-28' +
+           '&language=en' +
+           '&sortBy=popularity' +
+           '&apiKey='+key)
+
+    response = requests.get(url)
+
+    return response.json()
 
 def extractText(url):
     '''extract text'''
@@ -82,9 +97,6 @@ def addarticles(response, es):
 def feedEs():
     '''connect to the Elasticsearch, create the index and feed the data to the elasticsearch'''
 
-    key = os.environ.get('API_KEY')
-    ip = os.environ.get('IP')
-
     # connect to elasticsearch
     es = Elasticsearch(["http://"+ip])
 
@@ -99,7 +111,8 @@ def feedEs():
 
     for i in range(1,number_days+1):
         search_date = str((lastMonth + timedelta(days=i)).date())  
-        response = callNewsApi(search_date, search_date, key)
+        response = callNewsApi(search_date, key)
+        # print(response)
         addarticles(response, es)
         
 if __name__ == "__main__":

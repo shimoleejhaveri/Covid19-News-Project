@@ -40,7 +40,6 @@ def textblob_classification(text):
     blob = TextBlob(text)
     return blob.sentiment
 
-
 def clean_text(text):
     
     text = text.lower()
@@ -59,37 +58,20 @@ def clean_text(text):
 
     return text_p
 
-
 def pre_process(text):
     ''' Pre process and convert texts to a list of words'''
 
     text_p = clean_text(text)
-    # text_p = text.translate(str.maketrans('', '', string.punctuation))
-    # sentiment_analyser_word2verc(text_p)
-    # Tokenization
-    # sentense tokenize
-    # sentences = sent_tokenize(text_p)
-    # words = word_tokenize(text_p)
-
-    # tokenizer = TreebankWordTokenizer() 
-    tokenizer = RegexpTokenizer("[\w']+") # [] a set of characters you wish to match any alph or numeric char followed with ' and matches one or more occurrences of the pattern left to it.
+    
     words = tokenizer.tokenize(text_p) 
 
     # Stopword Filtering
     stop_words = set(stopwords.words('english'))
     filtered_words = [word for word in words if word not in stop_words]
-    
-    # Stemming
-    # porter = PorterStemmer()
-    # stemmed = [porter.stem(word) for word in checked_words]
-
-    # lemmatization
+ 
     lemmatizer = WordNetLemmatizer() 
     lemmas = [lemmatizer.lemmatize(word, pos ='v') for word in filtered_words] 
-    # past ense to present tense 
-    # print(lemmas)
 
-    # # Pos
     pos = pos_tag(lemmas)
     # print(pos)
 
@@ -117,9 +99,6 @@ def check_polarity(sentiment):
 
 def check_pandas():
     data = pd.read_csv("news.csv", delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
-    # print(data.head())
-    
-    # print (data[['Content', 'Sentiment_blob']])
 
     df = pd.DataFrame(data)
     for ind in df.index: 
@@ -128,8 +107,6 @@ def check_pandas():
 def classify():
     key=environ.get('API_KEY')
     ip=environ.get('IP')
-
-
 
     # connect to elasticsearch
     es=Elasticsearch(["http://"+ip])
@@ -157,14 +134,6 @@ def classify():
             
 
     check_pandas()    
-    
-    # pre process
-    # words = pre_process(text)
-    # bag_of_words(words)
-    # text_processed = createclusters(text)
-    # labeing_data(text)
-    # nltk_labeling(text)
-
     return
 
 
@@ -207,42 +176,5 @@ def main():
 
     print(vector.shape)
     print(vector.toarray())
-    # print(type(x_traincv))
-    # x_traincv = cv.fit_transform(['covid is bad', 'covid is less'])
-    # print(x_traincv.toarray())
-
-    #vectorizer = TfidfVectorizer(stop_words='english')
-    #X = vectorizer.fit_transform(x_train.values.astype('U'))
-    # print(vectorizer.get_feature_names())
-    # print(X.shape)
-
-    #df_tfidf = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names())
-    #df_tfidf.reset_index().drop_duplicates(subset='index', keep='first').set_index('index')
-    # print(df_tfidf)
-    
-    #tfidf_transformer = TfidfTransformer(smooth_idf=True, use_idf=True)
-    #tfidf_transformer.fit_transform(X)
-    #df_idf = pd.DataFrame(tfidf_transformer.idf_, columns=["idf_weights"])
-    # print(df_idf)
-    # print(df_idf.sort_values(by=['idf_weights']))
-    
-
-    # X_test = cv.transform(test_data)
-
-    # list_data = []
-    # for ind in df.index: 
-    #     list_data.append([df['Content'][ind], df['Sentiment_vader'][ind]])
-
-
-
-    # train_data, test_data = split_data(list_data)
-    # print(create_vectorizer(train_data, test_data))
-
 
 main()
-
-
-
-
-    # article talk about the us ==>0,1 UK
-    # the content needs to be not empty ==>10

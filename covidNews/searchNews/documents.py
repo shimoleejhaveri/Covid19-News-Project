@@ -13,12 +13,9 @@ import dateutil.relativedelta
 
 key=os.environ.get('API_KEY')
 ip=os.environ.get('IP')
+es = Elasticsearch(["http://"+ip])
 
 def dailySentAnalysis():
-
-    # connect to elasticsearch
-    ip = os.environ.get('IP')
-    es = Elasticsearch(["http://"+ip])
 
     query = {"size": 1000,"query":{"match_all" : {}}}
     data = es.search(index="news-sentiment", body=query)
@@ -61,9 +58,9 @@ def dailySentAnalysis():
 def sentAnalysis():
     
     # connect to elasticsearch
-    ip = os.environ.get('IP')
-    print(ip)
-    es = Elasticsearch(["http://"+ip])
+    # ip = os.environ.get('IP')
+    # print(ip)
+    # es = Elasticsearch(["http://"+ip])
 
     query = {"size": 1000,"query":{"match_all" : {}}}
     data = es.search(index="news-sentiment", body=query)
@@ -101,7 +98,8 @@ def sentAnalysis():
 
 def displayNews():
 
-    key=os.environ.get('API_KEY')
+    # key=os.environ.get('API_KEY')
+    # keywords = ['covid-19', 'covid', 'coronavirus']
 
     payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
 

@@ -1,22 +1,23 @@
 import os
 from elasticsearch import Elasticsearch
 import requests
-from dataclasses import dataclass
-import json
-from datetime import datetime, date
-from requests import get
-import uuid
-from searchNews.seed import addarticles, callNewsApi
+from pytz import timezone
+import datetime
+from seed import addarticles, callNewsApi
+from seedDaily import seedDaily
 
 def callApi():
-    key=os.environ.get('API_KEY')
-    ip=os.environ.get('IP')
+	key=os.environ.get('API_KEY')
+	ip=os.environ.get('IP')
 
-    es=Elasticsearch(["http://"+ip])
-    print("cron", es.indices.exists(index="news-articles"))
+	es=Elasticsearch(["http://"+ip])
+	print("cron =", es.indices.exists(index="news-articles"))
 
-    startdate = str((datetime.now()).date())
-    response = seed.callNewsApi(startdate, startdate, key)
-    seed.addarticles(response)
-    response = callNewsApi(startdate, startdate, key)
-    addarticles(response, es)
+	tz = timezone("US/Pacific")
+	today = str(datetime.datetime.now(tz))[:10]
+	
+	response = callNewsApi(today, key)
+	addarticles(response, es)
+	seedDaily()
+
+	print("END")

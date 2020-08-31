@@ -6,8 +6,6 @@ from nltk.tokenize import TreebankWordTokenizer
 from nltk.tokenize import RegexpTokenizer 
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
-'''predict the sentiments of all the seeded data'''
-
 from nltk import pos_tag
 import pandas as pd 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -15,7 +13,6 @@ from model import tfidf as tfidf
 import csv
 import os
 from elasticsearch import Elasticsearch
-
 
 def predict_sentiment(data, es):
     if data['hits']['hits'] == []:
@@ -26,6 +23,7 @@ def predict_sentiment(data, es):
                     'Content':[], 
                     'PublishedAt':[]
                     }
+    
     # create a dataframe fro each date and description 
     for article in data['hits']['hits']: 
         dic_articles['Id'].append(article['_id'])
@@ -65,11 +63,6 @@ def predict_sentiment(data, es):
         except:
             continue
 
-
-    # query = {"size": 1000,"query":{"match_all" : {}}}
-    # data = es.search(index="news-sentiment", body=query)
-    # print("\n\n\n", data)
-
 if __name__ == "__main__":
     # loading data
     ip=os.environ.get('IP')
@@ -79,6 +72,3 @@ if __name__ == "__main__":
     query = {"size": 1000,"query":{"match_all" : {}}}
     data = es.search(index="news-articles", body=query)
     predict_sentiment(data, es)
-
-
-
