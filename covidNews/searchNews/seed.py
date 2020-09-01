@@ -8,13 +8,15 @@ import datetime
 from pytz import timezone
 from goose3 import Goose
 import uuid
+from prediction import predictSentiment
 
 key = os.environ.get('API_KEY')
 ip = os.environ.get('IP')
 
+es = Elasticsearch(['http://'+ip])
+
 tz = timezone('US/Pacific')
 date = str(datetime.datetime.now(tz))[:10]
-time = str(datetime.datetime.now(tz))[11:19]
 
 def callNewsApi(startdate, key):
     '''Call the News API'''
@@ -79,22 +81,20 @@ def addArticles(response, es):
             new_id = uuid.uuid4()
 
             a = es.index(index='news-articles', id=new_id, body=dic_article)
-            print('THIS WORKED', a)
 
         except:
             continue
 
-def feedEs():
+def seedDaily():
     '''Connect to Elasticsearch, create indices and populate the database'''
-
-    es = Elasticsearch(['http://'+ip])
 
     if not es.indices.exists(index='news-articles'):
         es.indices.create(index='news-articles', ignore=400) 
-  
+    
     response = callNewsApi(date, key)
     addArticles(response, es)
-    print('THIS WORKED TOO')
-        
-if __name__ == '__main__':
-    feedEs()
+
+    query = {'size': 500, 'query':{'match':{'publishedAt': date}}}
+    data = es.search(index='news-articles', body=query)
+
+    predictSentiment(data, es)

@@ -35,8 +35,6 @@ def predictSentiment(data, es):
     loaded_model = joblib.load(filename)
     df_y = loaded_model.predict(features)
 
-    # print(df_x[9], df['Id'][9], df['PublishedAt'][9], df['Description'][9], df_y[9])
-
     # create an index
     if not es.indices.exists(index='news-sentiment'):
         es.indices.create(index='news-sentiment', ignore=400) 
