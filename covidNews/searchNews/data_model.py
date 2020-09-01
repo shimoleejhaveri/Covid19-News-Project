@@ -1,18 +1,16 @@
-import os
+'''Clean Tweet Dataset'''
 
-from tweepy import Stream, API, Cursor
+import os
+from tweepy import API, Cursor
 from tweepy import OAuthHandler
-from tweepy.streaming import StreamListener
 import json
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import pandas as pd
 import csv
 import re
 from textblob import TextBlob
 import string
-import preprocessor as p
-
+ 
 consumer_key = os.environ.get('TWITTER_API_KEY')
 consumer_secret = os.environ.get('TWITTER_SECRET_KEY')
 access_token = os.environ.get('ACCESS_TOKEN')
@@ -25,13 +23,13 @@ print(api)
 
 search_words = ['covid19', 'covid-19', 'coronavirus']
 date_since = '2020-05-21'
-tweets = Cursor(api.search, 'covid-19', lang="en", since=date_since, include_rts=False).items(10)
+tweets = Cursor(api.search, 'covid-19', lang='en', since=date_since, include_rts=False).items(10)
 
 #HappyEmoticons
 emoticons_happy = set([
     ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}',
     ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D',
-    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
+    '=-3', '=3', ':-))', ':-)', ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
     'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)',
     '<3'
     ])
@@ -44,19 +42,19 @@ emoticons_sad = set([
     ])
 
 #Emoji patterns
-emoji_pattern = re.compile("["
-         u"\U0001F600-\U0001F64F"  # emoticons
-         u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-         u"\U0001F680-\U0001F6FF"  # transport & map symbols
-         u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-         u"\U00002702-\U000027B0"
-         u"\U000024C2-\U0001F251"
-         "]+", flags=re.UNICODE)
+emoji_pattern = re.compile('['
+         u'\U0001F600-\U0001F64F'  # emoticons
+         u'\U0001F300-\U0001F5FF'  # symbols & pictographs
+         u'\U0001F680-\U0001F6FF'  # transport & map symbols
+         u'\U0001F1E0-\U0001F1FF'  # flags (iOS)
+         u'\U00002702-\U000027B0'
+         u'\U000024C2-\U0001F251'
+         "']+", flags=re.UNICODE)
 
 #combine sad and happy emoticons
 emoticons = emoticons_happy.union(emoticons_sad)
 
-def clean_tweets(tweet):
+def cleanTweets(tweet):
 	stop_words = set(stopwords.words('english'))
 	
 	word_tokens = word_tokenize(tweet)
@@ -77,7 +75,7 @@ def clean_tweets(tweet):
 	return ' '.join(filtered_tweet)
 
 	
-def sentiment_analysis(filtered_tweet):
+def sentimentAnalysis(filtered_tweet):
 	blob = TextBlob(filtered_tweet)
 	sentiment = blob.sentiment
 	polarity = sentiment.polarity
@@ -91,19 +89,19 @@ def sentiment_analysis(filtered_tweet):
             return 'negative'
 
 
-def add_tweet(filtered_tweet, sentiment):
-	created_at = clean_tweets(tweet._json['created_at'])
-	source = clean_tweets(tweet._json['source'])
+def addTweet(filtered_tweet, sentiment):
+	created_at = cleanTweets(tweet._json['created_at'])
+	source = cleanTweets(tweet._json['source'])
 
 	for tweet in tweets:
-		filtered_tweet = clean_tweets(tweet._json['text'])
+		filtered_tweet = cleanTweets(tweet._json['text'])
 		print(filtered_tweet)
-		sentiment = sentiment_analysis(filtered_tweet)
+		sentiment = sentimentAnalysis(filtered_tweet)
 		print(sentiment)
-		add_tweet(filtered_tweet, sentiment)
+		addTweet(filtered_tweet, sentiment)
 
 
-def create_csv_file():
+def createCsvFile():
 
 	with open('news.csv', 'w') as csvfile:
 		filewriter = csv.writer(csvfile, delimiter=',', 

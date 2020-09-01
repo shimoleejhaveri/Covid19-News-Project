@@ -1,46 +1,32 @@
+'''Test dataset cleanup and preprocess'''
+
 from elasticsearch import Elasticsearch
-import requests
-import json
-from os import environ
 import nltk
 import string
 from nltk.corpus import stopwords 
-from nltk.tokenize import word_tokenize 
-from nltk.tokenize import sent_tokenize
-from nltk.tokenize import TreebankWordTokenizer 
-from nltk.tokenize import RegexpTokenizer 
-from nltk.stem.porter import PorterStemmer
 from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer 
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
-
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.cluster import KMeans
-from sklearn.linear_model import SGDClassifier
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import re
-from nltk.corpus import stopwords
-import numpy as np 
-
 import csv
 
-def vaderSent_classification(text):
+def vaderSentClassification(text):
     '''get the score'''
 
     analyser = SentimentIntensityAnalyzer()
     vs = analyser.polarity_scores(text)
     return vs
 
-
-def textblob_classification(text):
+def textblobClassification(text):
 
     blob = TextBlob(text)
     return blob.sentiment
 
-def clean_text(text):
+def cleanText(text):
     
     text = text.lower()
 
@@ -54,14 +40,14 @@ def clean_text(text):
     text_p = ''.join([char if char != '’' else '\'' for char in text])
 
     # remove punctuation
-    text_p = "".join([char for char in text_p if char not in string.punctuation])
+    text_p = ''.join([char for char in text_p if char not in string.punctuation])
 
     return text_p
 
-def pre_process(text):
+def preprocess(text):
     ''' Pre process and convert texts to a list of words'''
 
-    text_p = clean_text(text)
+    text_p = cleanText(text)
     
     words = tokenizer.tokenize(text_p) 
 
@@ -77,8 +63,7 @@ def pre_process(text):
 
     return lemmas
 
-
-def check_sentiment(sentiment):
+def checkSentiment(sentiment):
     # decide sentiment as positive, negative and neutral 
     if sentiment['compound'] >= 0.05 : 
         return 'positive'
@@ -89,7 +74,7 @@ def check_sentiment(sentiment):
     else : 
         return 'neutral' 
 
-def check_polarity(sentiment):
+def checkPolarity(sentiment):
     if sentiment.polarity > 0:
         return 'positive'
     elif sentiment.polarity == 0:
@@ -97,8 +82,8 @@ def check_polarity(sentiment):
     else:
         return 'negative'
 
-def check_pandas():
-    data = pd.read_csv("news.csv", delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
+def checkPandas():
+    data = pd.read_csv('news.csv', delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
 
     df = pd.DataFrame(data)
     for ind in df.index: 
@@ -109,35 +94,34 @@ def classify():
     ip=environ.get('IP')
 
     # connect to elasticsearch
-    es=Elasticsearch(["http://"+ip])
-    # body = {"size": 500,"query":{"match":{"publishedAt": "2020-06-24"}}}
+    es=Elasticsearch(['http://'+ip])
+    # body = {'size': 500,'query':{'match':{'publishedAt': '2020-06-24'}}}
 
-    query = {"size": 500, "query": {"match_all": {}}}
-    b = es.search(index="news-articles", body=query)
+    query = {'size': 500, 'query': {'match_all': {}}}
+    b = es.search(index='news-articles', body=query)
     with open('news.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter='|', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob'])
 
-        for source in b["hits"]["hits"]:
-            date = source["_source"]["publishedAt"]
-            description = ""
-            if source["_source"]["description"]:
-                description = clean_text(source["_source"]["description"])
-            text = clean_text(source["_source"]["content"])
+        for source in b['hits']['hits']:
+            date = source['_source']['publishedAt']
+            description = ''
+            if source['_source']['description']:
+                description = cleanText(source['_source']['description'])
+            text = cleanText(source['_source']['content'])
 
-            vader_polarity = vaderSent_classification(text)['compound']
-            sentiment_vader = check_sentiment(vaderSent_classification(text))
+            vader_polarity = vaderSentClassification(text)['compound']
+            sentiment_vader = checkSentiment(vaderSentClassification(text))
 
-            blob_polarity = textblob_classification(text).polarity
-            sentiment_blob = check_polarity(textblob_classification(text))
+            blob_polarity = textblobClassification(text).polarity
+            sentiment_blob = checkPolarity(textblobClassification(text))
             filewriter.writerow([description, text, date, vader_polarity, sentiment_vader, blob_polarity, sentiment_blob])
             
 
-    check_pandas()    
+    checkPandas()    
     return
 
-
-def split_data(data):
+def splitData(data):
     total = len(data)
     training_ratio = 0.75
     training_data = []
@@ -152,15 +136,15 @@ def split_data(data):
     return training_data, evaluation_data
 
 def main():
-    data = pd.read_csv("news.csv", delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
+    data = pd.read_csv('news.csv', delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
     df = pd.DataFrame(data)
 
     df.loc[df['Sentiment_vader']=='negative','Sentiment_vader'] = -1
     df.loc[df['Sentiment_vader']=='positive','Sentiment_vader'] = 1
     df.loc[df['Sentiment_vader']=='neutral','Sentiment_vader'] = 0
 
-    df_x = df["Content"]
-    df_y = df["Sentiment_vader"]
+    df_x = df['Content']
+    df_y = df['Sentiment_vader']
     print(df.head())
 
     x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size=0.25,random_state=4)

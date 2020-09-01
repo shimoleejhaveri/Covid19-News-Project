@@ -1,17 +1,13 @@
-import os
-import csv 
+'''Code rough draft to show model testing'''
 
+import csv 
 import pandas as pd
 import numpy as np
-from scipy.stats import randint
 import seaborn as sns
 import matplotlib.pyplot as plt
-import seaborn as sns
-from io import StringIO
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import chi2
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -19,9 +15,9 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
-
+ 
 # loading data
-data = pd.read_csv("news.csv", delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
+data = pd.read_csv('news.csv', delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
 df = pd.DataFrame(data)
 print(df.shape)
 print(df.head(2).T) # Columns are shown in rows for easy reading\
@@ -73,7 +69,7 @@ features = tfidf.fit_transform(df1.Content.values.astype('U')).toarray()
 
 labels = df1.category_id
 
-print("Each of the %d complaints is represented by %d features (TF-IDF score of unigrams and bigrams)" %(features.shape))
+print('Each of the %d complaints is represented by %d features (TF-IDF score of unigrams and bigrams)' %(features.shape))
 
 
 # Finding the three most correlated terms with each of the product categories
@@ -84,9 +80,9 @@ for Sentiment_blob, category_id in sorted(category_to_id.items()):
   feature_names = np.array(tfidf.get_feature_names())[indices]
   unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
   bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
-  print("\n==> %s:" %(Sentiment_blob))
-  print("  * Most Correlated Unigrams are: %s" %(', '.join(unigrams[-N:])))
-  print("  * Most Correlated Bigrams are: %s" %(', '.join(bigrams[-N:])))
+  print('\n==> %s:' %(Sentiment_blob))
+  print('  * Most Correlated Unigrams are: %s' %(', '.join(unigrams[-N:])))
+  print('  * Most Correlated Bigrams are: %s' %(', '.join(bigrams[-N:])))
 
 
 # multi-classification model
@@ -131,7 +127,7 @@ sns.boxplot(x='model_name', y='accuracy',
             data=cv_df, 
             color='lightblue', 
             showmeans=True)
-plt.title("MEAN ACCURACY (cv = 5)\n", size=14)
+plt.title('MEAN ACCURACY (cv = 5)\n', size=14)
 # plt.savefig('aa.png')
 
 # Model Evaluation
@@ -153,10 +149,10 @@ print(metrics.classification_report(y_test, y_pred,
 # A Confusion Matrix is a table which rows represent the actual class and columns represents the predicted class.
 conf_mat = confusion_matrix(y_test, y_pred)
 fig, ax = plt.subplots(figsize=(3,3))
-sns.heatmap(conf_mat, annot=True, cmap="Blues", fmt='d',
+sns.heatmap(conf_mat, annot=True, cmap='Blues', fmt='d',
             xticklabels=category_id_df.Sentiment_blob.values, 
             yticklabels=category_id_df.Sentiment_blob.values)
 plt.ylabel('Actual')
 plt.xlabel('Predicted')
-plt.title("CONFUSION MATRIX - LinearSVC\n", size=16)
+plt.title('CONFUSION MATRIX - LinearSVC\n', size=16)
 

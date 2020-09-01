@@ -1,4 +1,4 @@
-'''Covid News'''
+'''Covid-19 News Main Page'''
 
 import os
 from elasticsearch import Elasticsearch
@@ -9,12 +9,42 @@ import datetime
 
 key=os.environ.get('API_KEY')
 ip=os.environ.get('IP')
-es = Elasticsearch(["http://"+ip])
+
+es = Elasticsearch(['http://'+ip])
+
+def displayNews():
+
+    tz = timezone('US/Pacific')
+    today = str(datetime.datetime.now(tz))[:10]
+
+    payload = {'q': 'Covid-19', 
+                'from': today, 
+                'sortBy': 'publishedAt', 
+                'language': 'en',
+                'apiKey': key}
+
+    url = requests.get('http://newsapi.org/v2/top-headlines', params=payload).json()
+  
+    articles = url['articles']
+    article_list = []
+      
+    for article in articles:
+
+        article_dict = {'source': article['source'],
+                        'title': article['title'],
+                        'description': article['description'],
+                        'url': article['url'],
+                        'url_img': article['urlToImage'],
+                        'publication_date': article['publishedAt'][:10]}
+          
+        article_list.append(article_dict)
+    
+    return article_list
 
 def dailySentAnalysis():
 
-    query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment", body=query)
+    query = {'size': 1000, 'query':{'match_all' : {}}}
+    data = es.search(index='news-sentiment', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -41,13 +71,12 @@ def dailySentAnalysis():
         if sent == 0 :
             add(key, articles, 'neutral')
 
-
     return articles
 
 def sentAnalysis():
 
-    query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment", body=query)
+    query = {'size': 1000, 'query':{'match_all' : {}}}
+    data = es.search(index='news-sentiment', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -56,7 +85,6 @@ def sentAnalysis():
     positive = []
     negative = []
 
-    # create a dictionary of articles and sentiments 
     for article in data['hits']['hits']: 
         try:
             if article['_source']['sentiment'] == 0:
@@ -80,32 +108,3 @@ def sentAnalysis():
             continue
       
     return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
-
-def displayNews():
-
-    tz = timezone("US/Pacific")
-    today = str(datetime.datetime.now(tz))[:10]
-
-    payload = {"q": "Covid-19", 
-                "from": today, 
-                "sortBy": "publishedAt", 
-                "language": "en",
-                "apiKey": key}
-
-    url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
-  
-    articles = url["articles"]
-    article_list = []
-      
-    for article in articles:
-
-        article_dict = {'source': article["source"],
-                        'title': article["title"],
-                        'description': article["description"],
-                        'url': article["url"],
-                        'url_img': article["urlToImage"],
-                        'publication_date': article["publishedAt"][:10]}
-          
-        article_list.append(article_dict)
-    
-    return article_list

@@ -1,20 +1,13 @@
+'''Sentiment Analysis of News Data'''
+
 import joblib
-from nltk.corpus import stopwords 
-from nltk.tokenize import word_tokenize 
-from nltk.tokenize import sent_tokenize
-from nltk.tokenize import TreebankWordTokenizer 
-from nltk.tokenize import RegexpTokenizer 
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer 
-from nltk import pos_tag
 import pandas as pd 
-from sklearn.feature_extraction.text import TfidfVectorizer
 from model import tfidf as tfidf
 import csv
 import os
 from elasticsearch import Elasticsearch
 
-def predict_sentiment(data, es):
+def predictSentiment(data, es):
     if data['hits']['hits'] == []:
         print('empty list')
         return 
@@ -24,7 +17,7 @@ def predict_sentiment(data, es):
                     'PublishedAt':[]
                     }
     
-    # create a dataframe fro each date and description 
+    # create a dataframe for each date and description 
     for article in data['hits']['hits']: 
         dic_articles['Id'].append(article['_id'])
         dic_articles['Description'].append(article['_source']['description'])
@@ -45,7 +38,7 @@ def predict_sentiment(data, es):
     # print(df_x[9], df['Id'][9], df['PublishedAt'][9], df['Description'][9], df_y[9])
 
     # create an index
-    if not es.indices.exists(index="news-sentiment"):
+    if not es.indices.exists(index='news-sentiment'):
         es.indices.create(index='news-sentiment', ignore=400) 
 
     dic_sentiments={}
@@ -63,12 +56,9 @@ def predict_sentiment(data, es):
         except:
             continue
 
-if __name__ == "__main__":
-    # loading data
+if __name__ == '__main__':
     ip=os.environ.get('IP')
-
-    # connect to elasticsearch
-    es=Elasticsearch(["http://"+ip])
-    query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-articles", body=query)
-    predict_sentiment(data, es)
+    es=Elasticsearch(['http://'+ip])
+    query = {'size': 1000, 'query':{'match_all' : {}}}
+    data = es.search(index='news-articles', body=query)
+    predictSentiment(data, es)

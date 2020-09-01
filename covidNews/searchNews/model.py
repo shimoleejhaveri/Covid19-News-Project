@@ -1,27 +1,14 @@
-'''create the model based the Tweet data and save it'''
+'''Create model based the Tweet data and save it'''
 
-import os
 import csv 
 import pandas as pd
-import numpy as np
-import seaborn as sns 
-import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_selection import chi2
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import LinearSVC
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import confusion_matrix
-from sklearn import metrics
 import joblib
 
-
 # loading data
-data = pd.read_csv("tweet.csv", delimiter='|', names = ['id', 'published_at', 'text', 'sentiment']) 
+data = pd.read_csv('tweet.csv', delimiter='|', names = ['id', 'published_at', 'text', 'sentiment']) 
 df = pd.DataFrame(data)
 df1 = df[['text', 'sentiment']].copy()
 
