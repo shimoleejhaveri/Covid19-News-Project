@@ -6,8 +6,9 @@ from model import tfidf as tfidf
 import csv
 import os
 from elasticsearch import Elasticsearch
-
+ 
 def predictSentiment(data, es):
+    
     if data['hits']['hits'] == []:
         print('empty list')
         return 
@@ -54,9 +55,9 @@ def predictSentiment(data, es):
         except:
             continue
 
-if __name__ == '__main__':
-    ip=os.environ.get('IP')
-    es=Elasticsearch(['http://'+ip])
-    query = {'size': 1000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-articles', body=query)
-    predictSentiment(data, es)
+# if __name__ == '__main__':
+#     ip=os.environ.get('IP')
+#     es=Elasticsearch(['http://'+ip])
+#     query = {'size': 1000, 'query':{'match_all' : {}}}
+#     data = es.search(index='news-articles', body=query)
+#     predictSentiment(data, es)

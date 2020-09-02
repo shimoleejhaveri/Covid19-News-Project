@@ -72,7 +72,7 @@ def dailySentAnalysis():
             add(key, articles, 'neutral')
 
     return articles
-
+ 
 def sentAnalysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
@@ -108,3 +108,4 @@ def sentAnalysis():
             continue
       
     return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
+    
