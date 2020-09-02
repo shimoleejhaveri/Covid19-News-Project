@@ -1,12 +1,13 @@
 '''Populate initial database with a month's worth of news articles'''
 
 import os
-from elasticsearch import Elasticsearch
 import requests
 import json
-from pytz import timezone
 import datetime
+from elasticsearch import Elasticsearch
+from pytz import timezone
 from seed import addArticles
+from predict import predictSentiment
 
 def populateDatabase():
 	
