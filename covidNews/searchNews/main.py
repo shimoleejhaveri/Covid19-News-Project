@@ -7,7 +7,6 @@ import json
 from pytz import timezone
 import datetime
 from seed import addArticles
-from documents import sentAnalysis
 
 def populateDatabase():
 	
@@ -34,16 +33,13 @@ def populateDatabase():
 
 	info = requests.get(url)
 	response = info.json()
-	print(response['totalResults'])
+
 	addArticles(response, es)
 
-	query = {'size': 500000, 'query':{'match_all' : {}}} # which publishedAt date to add here to query? \
-	# should we not not add the date altogether, and just run sentiment analysis on the whole dataset?
+	query = {'size': 500000, 'query':{'match_all' : {}}}
     data = es.search(index='news-articles', body=query)
 
     predictSentiment(data, es)
 
-	# check with Imen whether to call predictSentiment() or sentAnalysis()
-# populateDatabase()
 if __name__ == '__main__':
 	populateDatabase()
