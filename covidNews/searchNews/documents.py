@@ -17,8 +17,11 @@ def dailySentAnalysis():
     ip = os.environ.get('IP')
     es = Elasticsearch(["http://"+ip])
 
+
     query = {"size": 1000,"query":{"match_all" : {}}}
     data = es.search(index="news-sentiment", body=query)
+
+    print(data)
  
     if data['hits']['hits'] == []:
         return 0
@@ -45,7 +48,7 @@ def dailySentAnalysis():
         if sent == 0 :
             add(key, articles, 'neutral')
 
-
+    print(articles)
     return articles
 
     # if key in articles:

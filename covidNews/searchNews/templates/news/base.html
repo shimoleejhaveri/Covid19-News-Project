@@ -1,85 +1,106 @@
 {% load static %}
-
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
+  <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="{% static 'news/styles.css' %}">
-    
-    <!-- {# ChartJS #} -->
+     <!-- {# ChartJS #} -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
-
     <!-- jquery -->
     <script
       src="https://code.jquery.com/jquery-3.4.1.js"
       integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
       crossorigin="anonymous"></script>
 
-    <title>Latest Covid-19 News</title>
-</head>
-<body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-        <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'view-news' %}">Covid-19 News</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav ml-auto">
-              <a class="nav-item nav-link" href="{% url 'view-news' %}">About</a>
-            </div>
+    <!-- for the title we can remove it  -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900|Rubik:300,400,500" rel="stylesheet"> -->
+    <!-- for the whole page -->
+    <link rel="stylesheet" type="text/css" href="{% static 'news/css/styles-merged.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'news/css/style.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'news/css/styles.css' %}">
+  </head>
+  <body>
+
+  <!-- START: header -->
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container-fluid">
+        <a href="{% url 'view-news' %}" class="probootstrap-logo">About us</a>
+    </div>
+  </header>
+  <!-- END: header -->
+  
+  <!-- START: section -->
+  <section class="probootstrap-intro" style="background-image: url({% static 'news/img/cov3.jpg' %});" data-stellar-background-ratio="0.5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 probootstrap-intro-text">
+          <h1 class="probootstrap-animate" data-animate-effect="fadeIn">Sentiment Analysis of the Covid-19 News</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END: section -->
+  <main>
+    <section class="probootstrap-section">
+      <div class="container">
+        <script src="/static/news/js/chart.js"></script>
+        <div class="row">
+          <div class="col-md-12 text-center mb50">
+            <h3 class="mt0" id="chart1">Chart 1: Statistics of the News Sentiment</h3>
+          </div>
+          <div class="col-md-12 text-center mb50">
+            <h3 class="mt0" id="chart2">Chart 2: News Sentiments per day</h3>
           </div>
         </div>
-      </nav>
-    </header>
-
-    <main role="main" class="container">
-      <div class="row">
-        <div class="col-md-6">
-            <h1>Latest News</h1>
-            {% for post in posts %}
-                <article class="media content-section">
-                  <div class="media-body">
-                    <div class="article-metadata">
-                      <div class="mr-2">
-                        {{ post.source.name }}
-                        <small class="text-muted">{{ post.publication_date }}</small>
-                      </div>
-                    </div>
-                    <h3><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h2>
-                    <p class="article-content">{{ post.description }}</p>
-                  </div>
-                </article>
-            {% endfor %}
+        <div class="row">
+          <div class="col-md-12 text-center mb50">
+            <h2 class="mt0">Latest News</h2>
+          </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <ul class="probootstrap-blog-list">
 
-        <div class="col-md-6">
-          <div class="content-section">
-            <h3>Statistics</h3>
-            <p class='text-muted'>News Sentiment in the Time of COVID-19
-              <ul class="list-group">
-                <script src="/static/news/js/chart.js"></script>
-                <li class="list-group-item list-group-item-light" id="chart1">Chart 1: Statistics of the News Sentiment </li> 
-                <li class="list-group-item list-group-item-light" id="chart2">Chart 2: News Sentiments per day</li>
-              </ul>
-            </p>
+            {% for post in posts %}
+              <li>
+                <a href="#">
+                  <figure class="probootstrap-image"><img src="{{ post.url_img }}" alt="" class="img-responsive"></figure>
+                  <div class="probootstrap-text">
+                    <h3 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h3>
+                    <p class="article-content"> {{ post.description }}</p>
+                    <p class="text-mute mb20"> <b>{{ post.source.name }}</b> &bull; {{ post.publication_date }} </p>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+            </ul>
           </div>
         </div>
       </div>
-    </main>
+    </section>
+  </main>
+  <footer class="probootstrap-footer">
+     <div class="container">
+       <div class="row">
+         <div class="col-md-6">
+           <p class="mb0">&copy; Copyright 2017 <a href="https://uicookies.com/">uiCookies:Bold</a>. All Rights Reserved. <br> Designed &amp; Developed with <i class="icon-heart" style="position: relative; top: 2px;"></i> by <a href="https://uicookies.com">uicookies.com</a> <br> Images Demo Unsplash.com &amp; NothingToChance.co</p>
+         </div>
+         <div class="col-md-6">
+           <p class="mb0 probootstrap-back-to-top"><a href="#" class="js-backtotop">Back to top</a></p>
+         </div>
+       </div>
+     </div>
+  </footer> 
 
-    
+  <!-- jQuery first, then Popper.js --> 
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="/static/news/js/scripts.min.js"></script>
+  <script src="/static/news/js/main.min.js"></script>
+  <script src="/static/news/js/custom.js"></script>
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
+</body>  
 </html>

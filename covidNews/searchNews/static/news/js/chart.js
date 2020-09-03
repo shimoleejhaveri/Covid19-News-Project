@@ -53,13 +53,13 @@ $.ajax({
     list_nember_neg = []
     list_nember_neu = []
 
-    for (let day of Object.values(data)) {
-        list_nember_p.push(day.positive)
-        list_nember_neg.push(day.negative)
-        list_nember_neu.push(day.neutral)
-    }
+    list_nember_p = [10, 12, 23, 20] 
 
-    console.log(list_nember_neu)
+    for (let day of Object.values(data)) {
+      list_nember_p.push(day.positive)
+      list_nember_neg.push(day.negative)
+      list_nember_neu.push(day.neutral)
+    };
 
     window.chartColors = {
       red: 'rgb(255, 99, 132)',
@@ -79,7 +79,7 @@ $.ajax({
             backgroundColor: window.chartColors.green,
             fill: false,
             data: list_nember_p,
-            yAxisID: 'y-axis-1',
+            yAxisID: 'y-axis-1'
         }, {
             label: 'Neutral ',
             borderColor: window.chartColors.blue,
