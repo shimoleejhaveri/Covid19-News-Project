@@ -54,10 +54,3 @@ def predictSentiment(data, es):
             article = es.index(index='news-sentiment', id=df['Id'][i], body=dic_sentiments)
         except:
             continue
-
-# if __name__ == '__main__':
-#     ip=os.environ.get('IP')
-#     es=Elasticsearch(['http://'+ip])
-#     query = {'size': 1000, 'query':{'match_all' : {}}}
-#     data = es.search(index='news-articles', body=query)
-#     predictSentiment(data, es)

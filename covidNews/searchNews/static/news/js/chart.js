@@ -78,21 +78,21 @@ $.ajax({
             borderColor: window.chartColors.green,
             backgroundColor: window.chartColors.green,
             fill: false,
-            data: list_nember_p,
+            data: list_number_pos,
             yAxisID: 'y-axis-1',
         }, {
             label: 'Neutral ',
             borderColor: window.chartColors.blue,
             backgroundColor: window.chartColors.blue,
             fill: false,
-            data: list_nember_neu,
+            data: list_number_neu,
             yAxisID: 'y-axis-1'
         }, {
             label: 'Negative ',
             borderColor: window.chartColors.red,
             backgroundColor: window.chartColors.red,
             fill: false,
-            data: list_nember_neg,
+            data: list_number_neg,
             yAxisID: 'y-axis-1'
         }]
     };

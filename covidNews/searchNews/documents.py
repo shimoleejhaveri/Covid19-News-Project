@@ -85,7 +85,7 @@ def sentAnalysis():
     positive = []
     negative = []
 
-    for article in data['hits']['hits']: 
+    for article in data['hits']['hits']:
         try:
             if article['_source']['sentiment'] == 0:
                 article = {'description':article['_source']['description'],
@@ -104,8 +104,9 @@ def sentAnalysis():
                             'publishedAt':article['_source']['publishedAt']
                 }
                 positive.append(article)
+       
         except:
             continue
-      
-    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
     
+    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)} 
+

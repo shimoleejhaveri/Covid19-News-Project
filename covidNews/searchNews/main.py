@@ -7,7 +7,7 @@ import datetime
 from elasticsearch import Elasticsearch
 from pytz import timezone
 from seed import addArticles
-from predict import predictSentiment
+from prediction import predictSentiment
 
 def populateDatabase():
 	
@@ -37,10 +37,10 @@ def populateDatabase():
 
 	addArticles(response, es)
 
-	query = {'size': 500000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-articles', body=query)
+	query = {'size': 10000, 'query':{'match_all' : {}}}
+	data = es.search(index='news-articles', body=query)
 
-    predictSentiment(data, es)
+	predictSentiment(data, es)
 
 if __name__ == '__main__':
 	populateDatabase()
