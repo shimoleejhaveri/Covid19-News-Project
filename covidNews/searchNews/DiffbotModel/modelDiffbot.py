@@ -18,13 +18,12 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
 import joblib
-from imblearn.over_sampling import SMOTE
-import pickle
-# from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 
 
 # loading data
-data = pd.read_csv("final2.csv", delimiter='|', names = ['published_at', 'text', 'sentiment']) 
+data = pd.read_csv("diffbotBeforeCorrection.csv", delimiter='|', names = ['published_at', 'text', 'sentiment']) 
 df = pd.DataFrame(data)
 df1 = df[['text', 'sentiment']].copy()
 
@@ -37,63 +36,33 @@ round((total/len(df)*100),1)
 
 pd.DataFrame(df.sentiment.unique()).values
 
-# Histogram of the data
-number_of_element_per_class = df1['sentiment'].value_counts()
-
 # Create a new column 'category_id' with encoded categories 
 df1['category_id'] = df1['sentiment'].factorize()[0]
 category_id_df = df1[['sentiment', 'category_id']].drop_duplicates()
 
 
 # Dictionaries for future use
-# category_to_id = dict(category_id_df.values)
-# id_to_category = dict(category_id_df[['category_id', 'sentiment']].values)
+category_to_id = dict(category_id_df.values)
+id_to_category = dict(category_id_df[['category_id', 'sentiment']].values)
 
 
 #####Pre-processing
-
 tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5,
                         ngram_range=(1, 2), 
                         stop_words='english')
 
 # Transform each text into a vector
 features = tfidf.fit_transform(df1.text.values.astype('U')).toarray()
-labels = df1.sentiment
-
-# save the vectorizer
-with open('tfidf2.pk', 'wb') as fin:
-  pickle.dump(tfidf, fin)
-
-labels_np = labels.to_numpy()
-dict_data = { 'features':list(features), 'label':list(labels_np)}
-dataset = pd.DataFrame(dict_data)
- 
+labels = df1.category_id
+  
 # multi-classification model
-# X = df1['text'] # Collection of documents
-# y = df1['sentiment'] # Target or the labels we want to predict (i.e., the 3 different sentiments)
-
-
-### SMOTE over sampling
-
-# Resample the minority class. You can change the strategy to 'auto' if you are not sure.
-sm = SMOTE()
-
-# Fit the model to generate the data.
-oversampled_trainX, oversampled_trainY = sm.fit_resample(np.vstack(dataset['features'] ), dataset['label'])
-oversampled_train = pd.concat([pd.DataFrame(oversampled_trainX), pd.DataFrame(oversampled_trainY)], axis=1)
-
-X = pd.DataFrame(oversampled_trainX)
-Y = pd.DataFrame(oversampled_trainY)
-oversampled_train['features']=X.replace('',np.nan).stack().groupby(level=0).apply(list)
-
-
-number_of_element_per_class_SMOTE = oversampled_trainY.value_counts()
-
+X = df1['text'] # Collection of documents
+y = df1['sentiment'] # Target or the labels we want to predict (i.e., the 3 different sentiments)
 
 # Model creation
-X_train, X_test, y_train, y_test = train_test_split(X, 
-                                                               Y, 
-                                                               test_size=0.25, 
+X_train, X_test, y_train, y_test,indices_train,indices_test = train_test_split(features, 
+                                                               labels, 
+                                                               df1.index, test_size=0.25, 
                                                                random_state=1)
 
 # test
@@ -112,7 +81,7 @@ cv_df = pd.DataFrame(index=range(CV * len(models)))
 entries = []
 for model in models:
   model_name = model.__class__.__name__
-  accuracies = cross_val_score(model, oversampled_train['features'], Y, scoring='accuracy', cv=CV)
+  accuracies = cross_val_score(model, features, labels, scoring='accuracy', cv=CV)
   for fold_idx, accuracy in enumerate(accuracies):
     entries.append((model_name, fold_idx, accuracy))
     
@@ -134,27 +103,3 @@ model.fit(X_train, y_train)
 # save the model to disk
 filename = 'finalized_model5.sav'
 joblib.dump(model, filename)
-
-# predict
-y_pred = model.predict(X_test)
-
-    # Checking unique values
-predictions = pd.DataFrame(y_pred)
-print(predictions[0].value_counts())
-    # print( [df1['sentiment'].unique()])
-    # Classification report
-print('\t\t\t\tCLASSIFICATIION METRICS\n')
-print(metrics.classification_report(y_test, y_pred, 
-                                    target_names= ['positive', 'neutral', 'negative']))
-
-
-    # A Confusion Matrix is a table which rows represent the actual class and columns represents the predicted class.
-conf_mat = confusion_matrix(y_test, y_pred)
-fig, ax = plt.subplots(figsize=(3,3))
-sns.heatmap(conf_mat, annot=True, cmap="Blues", fmt='d',
-            xticklabels=category_id_df.sentiment.values, 
-            yticklabels=category_id_df.sentiment.values)
-plt.ylabel('Actual')
-plt.xlabel('Predicted')
-plt.title("CONFUSION MATRIX - LinearSVC\n", size=16)
-plt.savefig('cm2.png')

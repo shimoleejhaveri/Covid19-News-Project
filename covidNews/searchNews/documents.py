@@ -19,9 +19,8 @@ def dailySentAnalysis():
 
 
     query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment", body=query)
+    data = es.search(index="news-sentiment2", body=query)
 
-    print(data)
  
     if data['hits']['hits'] == []:
         return 0
@@ -62,11 +61,11 @@ def sentAnalysis():
     
     # connect to elasticsearch
     ip = os.environ.get('IP')
-    print(ip)
+
     es = Elasticsearch(["http://"+ip])
 
     query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment", body=query)
+    data = es.search(index="news-sentiment2", body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -104,10 +103,10 @@ def displayNews():
     key=os.environ.get('API_KEY')
 
 
-    payload = {"q": "Covid", "from": "2020-08-03", "sortBy": "publishedAt", "language": "en", "apiKey": key}
+    payload = {"q": "Covid", "from": "2020-09-01", "sortBy": "publishedAt", "language": "en", "apiKey": key}
 
     url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
-  
+    print(key, url)
     articles = url["articles"]
     article_list = []
       
@@ -122,5 +121,5 @@ def displayNews():
           
         article_list.append(article_dict)
 
-    return article_list
+    return article_list 
 

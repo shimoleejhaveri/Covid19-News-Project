@@ -24,7 +24,7 @@ def get_date(date):
 def callNewsApi(startdate, enddate, key):
     '''call the news api'''
 
-    return (requests.get("http://newsapi.org/v2/everything?q=Covid+covid-19+coronavirus&sortBy=popularity&from="+startdate+"&to="+enddate+"&pageSize=20&language=en&apiKey="+key)).json()
+    return (requests.get("http://newsapi.org/v2/everything?q=Covid+Covid-19+coronavirus&sortBy=popularity&from="+startdate+"&to="+enddate+"&pageSize=20&language=en&apiKey="+key)).json()
 
 def extractText(url):
     '''extract text'''
@@ -40,45 +40,45 @@ def addarticles(response, es):
 
     dic_article={}
     for article in response["articles"]:
-        try:
-            if article["source"]["name"] != "null":
-                dic_article["source_name"] = article["source"]["name"]
+        # try:
+        if article["source"]["name"] != "null":
+            dic_article["source_name"] = article["source"]["name"]
 
-            if article["description"] != "null":
-                dic_article["description"] = article["description"]
+        if article["description"] != "null":
+            dic_article["description"] = article["description"]
 
-            if article["author"] != "null":
-                dic_article["author"] = article["author"]
+        if article["author"] != "null":
+            dic_article["author"] = article["author"]
 
-            if article["title"] != "null":
-                dic_article["title"] = article["title"]
+        if article["title"] != "null":
+            dic_article["title"] = article["title"]
 
-            if article["url"] != "null":
-                request = requests.get(article["url"])
-                # check if the url is valid
-                if request.status_code == 200:
-                    dic_article["url"] = article["url"]
-                else:
-                    continue
+        if article["url"] != "null":
+            request = requests.get(article["url"])
+            # check if the url is valid
+            if request.status_code == 200:
+                dic_article["url"] = article["url"]
+            else:
+                continue
 
-            if article["publishedAt"] != "null":
-                # publishedAt': '2020-06-18T22:24:00Z
-                dic_article["publishedAt"] = str(get_date(article["publishedAt"])).replace(" ", "")
-                dic_article["timeAt"] = str(get_time(article["publishedAt"])).replace(" ", "")
-                
-            # extract the article from its URL
-            text = extractText(article["url"])
-            dic_article["content"] = text
+        if article["publishedAt"] != "null":
+            # publishedAt': '2020-06-18T22:24:00Z'
+            dic_article["publishedAt"] = str(get_date(article["publishedAt"])).replace(" ", "")
+            dic_article["timeAt"] = str(get_time(article["publishedAt"])).replace(" ", "")
             
-            # get the new id
-            new_id = uuid.uuid4()
+        # extract the article from its URL
+        text = extractText(article["url"])
+        dic_article["content"] = text
+        
+        # get the new id
+        new_id = str(uuid.uuid4())
 
-            # add to elasticsearch
-            a = es.index(index="news-articles", id=new_id, body=dic_article)
-            # print(a['result'])
+        # add to elasticsearch
+        a = es.index(index="news-articles2", id=new_id, body=dic_article)
+        print('the result', a['result'])
 
-        except:
-            continue
+        # except:
+        #     continue
 
 
 def feedEs():
@@ -91,8 +91,8 @@ def feedEs():
     es = Elasticsearch(["http://"+ip])
 
     # create an index
-    if not es.indices.exists(index="news-articles"):
-        es.indices.create(index='news-articles', ignore=400) 
+    if not es.indices.exists(index="news-articles2"):
+        es.indices.create(index='news-articles2', ignore=400) 
 
     # get today's date and a date of a month ago 
     now = datetime.now()

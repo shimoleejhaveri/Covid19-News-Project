@@ -43,12 +43,15 @@ $.ajax({
   method:'GET',
   url:endpoint2,
   success: function(data){
-    console.log(data)
+
     const chartsContainer = $('#chart2'); 
     const canvas = $('<canvas></canvas>');
     chartsContainer.append(canvas);
-
+    console.log(data)
+    
     list_days = Object.keys(data)
+    // list_days = Object.keys(data).sort().slice(-30, 0)
+    console.log(list_days)
     list_nember_p = []
     list_nember_neg = []
     list_nember_neu = []
@@ -97,35 +100,28 @@ $.ajax({
         }]
     };
 
-    window.onload = function() {
-        // let ctx = canvas.getContext('3d');
-        window.myLine = Chart.Line(canvas, {
-            data: lineChartData,
-            options: {
-                responsive: true,
-                hoverMode: 'index',
-                stacked: false,
-                // title: {
-                //     display: true,
-                //     text: 'Chart.js Line Chart - Multi Axis'
-                // },
-                scales: {
-                    yAxes: [{
-                        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-                        display: true,
-                        position: 'left',
-                        id: 'y-axis-1',
+    new Chart(canvas, {
+      type: 'line',
+      data: lineChartData,
+      options: {
+          responsive: true,
+          hoverMode: 'index',
+          stacked: false,
+          scales: {
+              yAxes: [{
+                  type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                  display: true,
+                  position: 'left',
+                  id: 'y-axis-1',
 
-                        // grid line settings
-                        gridLines: {
-                            drawOnChartArea: true, // only want the grid lines for one axis to show up
-                        },
-                    }],
-                }
-            }
-        });
-    };
-
+                  // grid line settings
+                  gridLines: {
+                      drawOnChartArea: true, // only want the grid lines for one axis to show up
+                  },
+              }],
+          }
+      }
+    });
   },
   error:function(error_data){
     console.log(error_data)

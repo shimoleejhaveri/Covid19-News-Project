@@ -25,8 +25,13 @@ response = callNewsApi(date, date, key)
 addarticles(response, es) 
 
 # predict sentiments 
-query = {"size": 500,"query":{"match":{"publishedAt": date}}}
+query = {"size": 1000,"query":{"match":{"publishedAt": '2020-09-09'}}}
 data = es.search(index="news-articles", body=query)
+print(data)
+
+for a in data['hits']['hits']: 
+    print(a['_source']['description'],'\n')
+
 
 # predict sentiment and add to the Elasticsearch database
 predict_sentiment(data, es)

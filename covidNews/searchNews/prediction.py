@@ -11,10 +11,11 @@ from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 import pandas as pd 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from model import tfidf as tfidf
 import csv
 import os
 from elasticsearch import Elasticsearch
+import pickle
+from OmarImen import createModel as tfidf
 
 
 def predict_sentiment(data, es):
@@ -34,21 +35,30 @@ def predict_sentiment(data, es):
         dic_articles['PublishedAt'].append(article['_source']['publishedAt'])
 
     df = pd.DataFrame.from_dict(dic_articles)
-    df_x = df['Content']
+    df_x = df['Description']
+    print(df_x)
 
+    # get the tfidf.pk
+    tfidf = pickle.load(open("tfidf2.pk", "rb"))
+
+    # Create new tfidfVectorizer with old vocabulary
+    tf_new = TfidfVectorizer(sublinear_tf=True, min_df=5,
+                          ngram_range=(1, 2), 
+                          stop_words='english',
+                          vocabulary = tfidf.vocabulary_)
 
     # We transform each text into a vector
-    features = tfidf.transform(df_x.astype('U')).toarray()
+    features = tf_new.fit_transform(df_x.astype('U')).toarray()
 
-    filename = 'finalized_model.sav'
+    filename = 'finalized_model5.sav'
     loaded_model = joblib.load(filename)
     df_y = loaded_model.predict(features)
 
     # print(df_x[9], df['Id'][9], df['PublishedAt'][9], df['Description'][9], df_y[9])
 
     # create an index
-    if not es.indices.exists(index="news-sentiment"):
-        es.indices.create(index='news-sentiment', ignore=400) 
+    if not es.indices.exists(index="news-sentiment2"):
+        es.indices.create(index='news-sentiment2', ignore=400) 
 
     dic_sentiments={}
     # add articles to the Elasticsearch index
@@ -61,7 +71,7 @@ def predict_sentiment(data, es):
             dic_sentiments['sentiment'] = df_y[i]
 
             # add to elasticsearch
-            article = es.index(index='news-sentiment', id=df['Id'][i], body=dic_sentiments)
+            article = es.index(index='news-sentiment2', id=df['Id'][i], body=dic_sentiments)
         except:
             continue
 
@@ -77,7 +87,7 @@ if __name__ == "__main__":
     # connect to elasticsearch
     es=Elasticsearch(["http://"+ip])
     query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-articles", body=query)
+    data = es.search(index="news-articles2", body=query)
     predict_sentiment(data, es)
 
 
