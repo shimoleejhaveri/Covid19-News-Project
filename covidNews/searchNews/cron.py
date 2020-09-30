@@ -5,15 +5,15 @@ from elasticsearch import Elasticsearch
 import requests
 from pytz import timezone
 import datetime
-from seed import seedDaily
+from seed import seed_daily
 
-def callApi():
+def call_api():
 	
-	ip=os.environ.get('IP')
-	es=Elasticsearch(['http://'+ip])
+	ip = os.environ.get('IP')
+	es = Elasticsearch(['http://'+ip])
 	
 	print('cron =', es.indices.exists(index='news-articles')) # sanity check to see if ES is working
 
-	seedDaily()
+	seed_daily()
 
-callApi()
+call_api()

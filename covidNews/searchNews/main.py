@@ -5,20 +5,19 @@ import requests
 import json
 import datetime
 from elasticsearch import Elasticsearch
-from pytz import timezone
-from seed import addArticles
-from prediction import predictSentiment
+from seed import add_articles
+from prediction import predict_sentiment
 
-def populateDatabase():
+def populate_database():
 	
-	key=os.environ.get('API_KEY')
-	ip=os.environ.get('IP')
+	key = os.environ.get('API_KEY')
+	ip = os.environ.get('IP')
 
 	es = Elasticsearch(['http://'+ip])
 
-	tz = timezone('US/Pacific')
-	today = datetime.datetime.now(tz)
-	yesterday = str(today - datetime.timedelta(days=1))[:10]
+	today = datetime.datetime.now()
+	now = str(today)[:10]
+	# yesterday = str(today - datetime.timedelta(days=1))[:10]
 	last_month = str(today - datetime.timedelta(days=30))[:10]
 
 	keywords = ['covid-19', 'covid', 'coronavirus']
@@ -27,7 +26,7 @@ def populateDatabase():
            'q=' + 
            ' OR '.join(keywords)) +
            '&from=' + last_month +
-           '&to=' + yesterday +
+           '&to=' + now +
            '&language=en' +
            '&sortBy=popularity' +
            '&apiKey=' + key)
@@ -35,12 +34,12 @@ def populateDatabase():
 	info = requests.get(url)
 	response = info.json()
 
-	addArticles(response, es)
+	add_articles(response, es, now)
 
-	query = {'size': 10000, 'query':{'match_all' : {}}}
+	query = {'size': 10000, 'query': {'match_all' : {}}}
 	data = es.search(index='news-articles', body=query)
 
-	predictSentiment(data, es)
+	predict_sentiment(data, es)
 
 if __name__ == '__main__':
-	populateDatabase()
+	populate_database()

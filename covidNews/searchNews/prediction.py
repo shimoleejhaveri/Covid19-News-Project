@@ -6,12 +6,14 @@ from model import tfidf as tfidf
 import csv
 import os
 from elasticsearch import Elasticsearch
+from datetime import datetime
  
-def predictSentiment(data, es):
+def predict_sentiment(data, es):
     
     if data['hits']['hits'] == []:
         print('empty list')
         return 
+    
     dic_articles = {'Id':[],
                     'Description':[],
                     'Content':[], 
@@ -28,7 +30,6 @@ def predictSentiment(data, es):
     df = pd.DataFrame.from_dict(dic_articles)
     df_x = df['Content']
 
-
     # We transform each text into a vector
     features = tfidf.transform(df_x.astype('U')).toarray()
 
@@ -41,6 +42,7 @@ def predictSentiment(data, es):
         es.indices.create(index='news-sentiment', ignore=400) 
 
     dic_sentiments={}
+    
     # add articles to the Elasticsearch index
     for i in range(0, len(df_x)):
         try:
@@ -54,3 +56,14 @@ def predictSentiment(data, es):
             article = es.index(index='news-sentiment', id=df['Id'][i], body=dic_sentiments)
         except:
             continue
+
+# ip = os.environ.get('IP')
+# es = Elasticsearch(['http://'+ip])
+
+
+# date_dt2 = datetime.strptime('2020-09-22', '%y-%m-%d')
+# query = {'size': 500, 'query': {'match': {'publishedAt': date_dt2}}}
+# data = es.search(index="news-articles", body=query)
+# print("\n\n\n\n", "THIS IS THE DATA", data)
+
+# predict_sentiment()

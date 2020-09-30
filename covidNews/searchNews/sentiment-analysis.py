@@ -14,19 +14,19 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import csv
 
-def vaderSentClassification(text):
+def vader_sent_classification(text):
     '''get the score'''
 
     analyser = SentimentIntensityAnalyzer()
     vs = analyser.polarity_scores(text)
     return vs
 
-def textblobClassification(text):
+def textblob_classification(text):
 
     blob = TextBlob(text)
     return blob.sentiment
 
-def cleanText(text):
+def clean_text(text):
     
     text = text.lower()
 
@@ -47,7 +47,7 @@ def cleanText(text):
 def preprocess(text):
     ''' Pre process and convert texts to a list of words'''
 
-    text_p = cleanText(text)
+    text_p = clean_text(text)
     
     words = tokenizer.tokenize(text_p) 
 
@@ -63,7 +63,7 @@ def preprocess(text):
 
     return lemmas
 
-def checkSentiment(sentiment):
+def check_sentiment(sentiment):
     # decide sentiment as positive, negative and neutral 
     if sentiment['compound'] >= 0.05 : 
         return 'positive'
@@ -74,7 +74,7 @@ def checkSentiment(sentiment):
     else : 
         return 'neutral' 
 
-def checkPolarity(sentiment):
+def check_polarity(sentiment):
     if sentiment.polarity > 0:
         return 'positive'
     elif sentiment.polarity == 0:
@@ -82,7 +82,7 @@ def checkPolarity(sentiment):
     else:
         return 'negative'
 
-def checkPandas():
+def check_pandas():
     data = pd.read_csv('news.csv', delimiter='|', names = ['Description', 'Content', 'PublishedAt', 'vader_polarity', 'Sentiment_vader', 'blob_polarity', 'Sentiment_blob']) 
 
     df = pd.DataFrame(data)
@@ -110,18 +110,18 @@ def classify():
                 description = cleanText(source['_source']['description'])
             text = cleanText(source['_source']['content'])
 
-            vader_polarity = vaderSentClassification(text)['compound']
-            sentiment_vader = checkSentiment(vaderSentClassification(text))
+            vader_polarity = vader_sent_classification(text)['compound']
+            sentiment_vader = check_sentiment(vader_sent_classification(text))
 
-            blob_polarity = textblobClassification(text).polarity
-            sentiment_blob = checkPolarity(textblobClassification(text))
+            blob_polarity = textblob_classification(text).polarity
+            sentiment_blob = check_polarity(textblob_classification(text))
             filewriter.writerow([description, text, date, vader_polarity, sentiment_vader, blob_polarity, sentiment_blob])
             
 
-    checkPandas()    
+    check_pandas()    
     return
 
-def splitData(data):
+def split_data(data):
     total = len(data)
     training_ratio = 0.75
     training_data = []

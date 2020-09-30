@@ -1,4 +1,4 @@
-'''Covid-19 News Main Page'''
+'''Covid-19 News Landing Page'''
 
 import os
 from elasticsearch import Elasticsearch
@@ -7,41 +7,34 @@ import json
 from pytz import timezone
 import datetime
 
-key=os.environ.get('API_KEY')
-ip=os.environ.get('IP')
+key = os.environ.get('API_KEY')
+ip = os.environ.get('IP')
 
-es = Elasticsearch(['http://'+ip])
+es = Elasticsearch(['http://' + ip])
 
-def displayNews():
+def display_news(es):
 
-    tz = timezone('US/Pacific')
-    today = str(datetime.datetime.now(tz))[:10]
-
-    payload = {'q': 'Covid-19', 
-                'from': today, 
-                'sortBy': 'publishedAt', 
-                'language': 'en',
-                'apiKey': key}
-
-    url = requests.get('http://newsapi.org/v2/top-headlines', params=payload).json()
-  
-    articles = url['articles']
-    article_list = []
-      
-    for article in articles:
-
-        article_dict = {'source': article['source'],
-                        'title': article['title'],
-                        'description': article['description'],
-                        'url': article['url'],
-                        'url_img': article['urlToImage'],
-                        'publication_date': article['publishedAt'][:10]}
-          
-        article_list.append(article_dict)
+    query = {'size': 15, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
     
+    data = es.search(index="news-articles", body=query)
+    articles = data['hits']['hits']
+   
+    article_list = []
+
+    for article in articles:
+        new_article = article['_source']
+        
+        article_dict = {'source': new_article['source_name'],
+                        'title': new_article['title'],
+                        'description': new_article['description'],
+                        'url': new_article['url'],
+                        'publication_date': new_article['publishedAt'][:10]}
+              
+        article_list.append(article_dict)
+        
     return article_list
 
-def dailySentAnalysis():
+def daily_sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
     data = es.search(index='news-sentiment', body=query)
@@ -73,7 +66,7 @@ def dailySentAnalysis():
 
     return articles
  
-def sentAnalysis():
+def sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
     data = es.search(index='news-sentiment', body=query)

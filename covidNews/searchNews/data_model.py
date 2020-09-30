@@ -54,7 +54,7 @@ emoji_pattern = re.compile('['
 #combine sad and happy emoticons
 emoticons = emoticons_happy.union(emoticons_sad)
 
-def cleanTweets(tweet):
+def clean_tweets(tweet):
 	stop_words = set(stopwords.words('english'))
 	
 	word_tokens = word_tokenize(tweet)
@@ -74,8 +74,7 @@ def cleanTweets(tweet):
 			filtered_tweet.append(w)
 	return ' '.join(filtered_tweet)
 
-	
-def sentimentAnalysis(filtered_tweet):
+def sentiment_analysis(filtered_tweet):
 	blob = TextBlob(filtered_tweet)
 	sentiment = blob.sentiment
 	polarity = sentiment.polarity
@@ -88,20 +87,18 @@ def sentimentAnalysis(filtered_tweet):
         else:
             return 'negative'
 
-
-def addTweet(filtered_tweet, sentiment):
-	created_at = cleanTweets(tweet._json['created_at'])
-	source = cleanTweets(tweet._json['source'])
+def add_tweet(filtered_tweet, sentiment):
+	created_at = clean_tweets(tweet._json['created_at'])
+	source = clean_tweets(tweet._json['source'])
 
 	for tweet in tweets:
-		filtered_tweet = cleanTweets(tweet._json['text'])
+		filtered_tweet = clean_tweets(tweet._json['text'])
 		print(filtered_tweet)
-		sentiment = sentimentAnalysis(filtered_tweet)
+		sentiment = sentiment_analysis(filtered_tweet)
 		print(sentiment)
-		addTweet(filtered_tweet, sentiment)
+		add_tweet(filtered_tweet, sentiment)
 
-
-def createCsvFile():
+def create_csv_file():
 
 	with open('news.csv', 'w') as csvfile:
 		filewriter = csv.writer(csvfile, delimiter=',', 

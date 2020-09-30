@@ -18,7 +18,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('newsBySentiment', views.searchForNews, name='news-sentiment'),
-    path('newsByDate', views.searchForDates, name='news-date'),
-    path('', views.viewNews, name='view-news'),
+    path('newsBySentiment', views.search_for_news, name='news-sentiment'),
+    path('newsByDate', views.search_for_dates, name='news-date'),
+    path('', views.view_news, name='view-news'),
+    path('', views.about, name='about')
 ]
