@@ -88,19 +88,13 @@ def add_articles(response, es, fetched_at):
             dic_article['timeAt'] = str(article['publishedAt'][11:19]).replace(' ', '')
 
         dic_article['createdAt'] = datetime.now().isoformat()
-        # print("\n\n\n", "This is created_at", dic_article['createdAt'])
-        
         dic_article['fetchedAt'] = fetched_at
-        # print("\n\n\n", "This is fetched_at", dic_article['fetchedAt'])
-
-        # print("HELLO")
-
+    
         text = extract_text(article['url'])
         dic_article['content'] = text
         
         new_id = hashlib.md5(dic_article['url'].encode()).hexdigest() 
-        # print("THIS IS NEW_ID", new_id)
-
+    
         a = es.index(index="news-articles", id=new_id, body=dic_article)
 
 def seed_daily():
@@ -110,29 +104,15 @@ def seed_daily():
         es.indices.create(index="news-articles", ignore=400) 
     
     max_fetched_at = get_max_fetched_at(es)
-    print("\n\n\n","This is max_fetched_at", max_fetched_at)
-
     dt = datetime.fromisoformat(max_fetched_at)
-    print("\n\n\n", "This is dt", dt)
-
     last_fetched_at = dt.date().isoformat()
-    print("\n\n\n", "This is last_fetched_at", last_fetched_at)
-    print("\n\n\n", "This is last_fetched_at type", type(last_fetched_at))
-
     new_fetched_at = datetime.utcnow()
-    print("\n\n\n", "This is new_fetched_at", new_fetched_at)
-    
+   
     response = call_news_api(last_fetched_at, key)
-    # print("\n\n\n", "This is response", response)
 
     add_articles(response, es, new_fetched_at)
 
-    # query = {'size': 500, 'query': {'match': {'publishedAt': last_fetched_at}}}
     query = {'size': 500, 'query': {'match_all': {}}}
-    # print(query)
     data = es.search(index="news-articles", body=query)
-    print("\n\n\n\n", "THIS IS THE DATA", data)
 
     predict_sentiment(data, es)
-
-seed_daily()
