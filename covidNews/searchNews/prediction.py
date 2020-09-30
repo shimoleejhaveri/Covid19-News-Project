@@ -7,6 +7,7 @@ import csv
 import os
 from elasticsearch import Elasticsearch
 from datetime import datetime
+import pickle
  
 def predict_sentiment(data, es):
     
@@ -28,10 +29,18 @@ def predict_sentiment(data, es):
         dic_articles['PublishedAt'].append(article['_source']['publishedAt'])
 
     df = pd.DataFrame.from_dict(dic_articles)
-    df_x = df['Content']
+    df_x = df['Description']
+
+    tfidf = pickle.load(open("tfidf2.pk", "rb"))
+
+    # Create new tfidfVectorizer with old vocabulary
+    tf_new = TfidfVectorizer(sublinear_tf=True, min_df=5,
+                          ngram_range=(1, 2), 
+                          stop_words='english',
+                          vocabulary = tfidf.vocabulary_)
 
     # We transform each text into a vector
-    features = tfidf.transform(df_x.astype('U')).toarray()
+    features = tf_new.fit_transform(df_x.astype('U')).toarray()
 
     filename = 'finalized_model.sav'
     loaded_model = joblib.load(filename)
@@ -56,14 +65,3 @@ def predict_sentiment(data, es):
             article = es.index(index='news-sentiment', id=df['Id'][i], body=dic_sentiments)
         except:
             continue
-
-# ip = os.environ.get('IP')
-# es = Elasticsearch(['http://'+ip])
-
-
-# date_dt2 = datetime.strptime('2020-09-22', '%y-%m-%d')
-# query = {'size': 500, 'query': {'match': {'publishedAt': date_dt2}}}
-# data = es.search(index="news-articles", body=query)
-# print("\n\n\n\n", "THIS IS THE DATA", data)
-
-# predict_sentiment()

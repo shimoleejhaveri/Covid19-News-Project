@@ -25,7 +25,7 @@
         <div class="col-md-12 text-center probootstrap-logo">Sentiment Analysis of Covid-19 News
         </div>
       </div>
-      {% block content %}{% endblock %}
+     <!--  {% block content %}{% endblock %} -->
     </header>
   <!-- END: header -->
   <!-- START: section -->
@@ -60,7 +60,7 @@
               <div class="probootstrap-text">
                 <h3 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h3>
                 <p class="article-content"> {{ post.description }}</p>
-                <p class="text-mute mb20"><b>{{ post.source.name }}</b>&bull; {{ post.publication_date }}</p>
+                <p class="text-mute mb20"><b>{{ post.source.name }}</b>{{ post.publication_date }}</p>
               </div>
             </div>
           {% endfor %}
