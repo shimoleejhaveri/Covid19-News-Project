@@ -15,7 +15,7 @@ import csv
 import os
 from elasticsearch import Elasticsearch
 import pickle
-from OmarImen import createModel as tfidf
+# from OmarImen import createModel as tfidf
 
 
 def predict_sentiment(data, es):
