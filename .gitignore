@@ -1,4 +1,14 @@
 /env
+/.DS_Store
+/covidNews/.DS_Store
+/covidNews/__pycache__/
+/covidNews/covidNews/.DS_Store
+/covidNews/covidNews/__pycache__
+/covidNews/searchNews/.DS_Store
+/covidNews/searchNews/__pycache__
+/covidNews/searchNews/migrations/__pycache__
+secrets.sh
+.DS_Store
 covidNews/.DS_Store
 covidNews/searchNews/final.csv
 covidNews/searchNews/static/.DS_Store
