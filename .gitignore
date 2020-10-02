@@ -8,6 +8,7 @@
 /covidNews/searchNews/__pycache__
 /covidNews/searchNews/migrations/__pycache__
 secrets.sh
+.DS_Store
 covidNews/.DS_Store
 covidNews/searchNews/final.csv
 covidNews/searchNews/static/.DS_Store
