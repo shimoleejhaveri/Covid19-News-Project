@@ -1,0 +1,70 @@
+{% extends 'news/base.html' %}
+{% load static %}
+
+{% block title %}
+  Covid-19 News
+{% endblock %}
+
+{% block body %}
+  <!-- START: header -->
+  <header role="banner" class="news-header">
+    <div class="container-fluid">
+      <div class="col-md-12 text-center news-logo">Sentiment Analysis of Covid-19 News
+      </div>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <!-- START: section -->
+  <section class="news-intro" style="background-image: url({% static 'news/img/img2.jpg' %});" data-stellar-background-ratio="0.5">
+  </section>
+  <!-- END: section -->
+
+  <!-- START: main -->
+    <main>
+      <section class="news-section">
+        <div class="container">
+          <script src="/static/news/js/chart.js"></script>
+          <div class="row">
+            <div class="col-md-6 text-center mb50">
+              <h3 class="mt0" id="chart1">Historical Statistic</h3>
+            </div>
+            <div class="col-md-6 text-center mb50">
+              <h3 class="mt0" id="chart2">Daily Statistic</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center mb20">
+              <h2 class="mt0">Latest News</h2>
+            </div>
+          </div>
+        </div> 
+        <div class="row" style="padding-left: 30px; padding-right: 30px;">
+          {% for post in posts %}
+            {% if forloop.counter|divisibleby:"3" %}
+              <div class="col-md-12"></div>
+            {% endif %}
+            <div class="col-md-4">
+              <div class="news-text">
+                <h3 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h3>
+                <p class="article-content"> {{ post.description }}</p>
+                <p class="text-mute mb20"><b>{{ post.source.name }}</b>{{ post.publication_date }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+    <!-- END: main -->
+
+    <!-- START: footer -->
+    <footer class="news-footer">
+      <div class="container">
+        <div class="row">
+          <p class="mb0 back-to-top"><a href="#" class="js-backtotop">Back to top</a></p>
+        </div>
+      </div>
+    </footer> 
+    <!-- END: footer -->
+
+{% endblock %}
