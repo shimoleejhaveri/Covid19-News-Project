@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from searchNews.documents import sent_analysis, daily_sent_analysis, display_news
 import os
 from elasticsearch import Elasticsearch
@@ -23,7 +23,7 @@ def view_news(request):
 	context = {
 		'posts': posts
 	}
-	return render(request, 'news/base.html', context)
+	return render(request, 'news/news.html', context)
 
 def about(request):
 

@@ -21,5 +21,5 @@ urlpatterns = [
     path('newsBySentiment', views.search_for_news, name='news-sentiment'),
     path('newsByDate', views.search_for_dates, name='news-date'),
     path('', views.view_news, name='view-news'),
-    path('', views.about, name='about')
+    path('about/', views.about, name='about')
 ]

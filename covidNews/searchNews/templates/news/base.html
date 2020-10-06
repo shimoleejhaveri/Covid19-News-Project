@@ -5,77 +5,36 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Covid-19 News</title>
+    <!-- <title>Covid-19 News</title> -->
 
     <!-- Chart JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> 
+
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="{% static 'news/css/styles-merged.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'news/css/style.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'news/css/styles.css' %}">
+    
+    <title>
+    {% block title %} {% endblock %}
+    </title>
   </head>
 
   <body>
-  <!-- START: header -->
-    <header role="banner" class="probootstrap-header">
-      <div class="container-fluid">
-        <div class="col-md-12 text-center probootstrap-logo">Sentiment Analysis of Covid-19 News
-        </div>
-      </div>
-     <!--  {% block content %}{% endblock %} -->
-    </header>
-  <!-- END: header -->
-  <!-- START: section -->
-    <section class="probootstrap-intro" style="background-image: url({% static 'news/img/img2.jpg' %});background-size: cover;" data-stellar-background-ratio="0.2">
-    </section>
-  <!-- END: section -->
-  <!-- START: main -->
-    <main>
-      <section class="probootstrap-section">
-        <div class="container">
-          <script src="/static/news/js/chart.js"></script>
-          <div class="row">
-            <div class="col-md-6 text-center mb50">
-              <h3 class="mt0" id="chart1">Historical Statistic</h3>
-            </div>
-            <div class="col-md-6 text-center mb50">
-              <h3 class="mt0" id="chart2">Daily Statistic</h3>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12 text-center mb20">
-              <h2 class="mt0">Latest News</h2>
-            </div>
-          </div>
-        </div> 
-        <div class="row" style="padding-left: 30px; padding-right: 30px;">
-          {% for post in posts %}
-            {% if forloop.counter|divisibleby:"3" %}
-              <div class="col-md-12"></div>
-            {% endif %}
-            <div class="col-md-4">
-              <div class="probootstrap-text">
-                <h3 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h3>
-                <p class="article-content"> {{ post.description }}</p>
-                <p class="text-mute mb20"><b>{{ post.source.name }}</b>{{ post.publication_date }}</p>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </section>
-    </main>
-    <!-- END: main -->
-    <!-- START: footer -->
-    <footer class="probootstrap-footer">
-      <div class="container">
-        <div class="row">
-          <p class="mb0 probootstrap-back-to-top"><a href="#" class="js-backtotop">Back to top</a></p>
-        </div>
-      </div>
-    </footer> 
-    <!-- END: footer -->
+    {% block body %} {% endblock %}
+
+    <!-- START: script tags -->
+    <!-- jQuery script tag -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap script tags -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- END: script tags -->
+     
   </body>  
 </html>

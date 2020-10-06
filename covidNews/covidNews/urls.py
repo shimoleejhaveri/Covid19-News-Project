@@ -18,6 +18,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('news/', include('searchNews.urls')),
-    path('about/', include('searchNews.urls'))
+    path('news/', include('searchNews.urls'))
 ]
