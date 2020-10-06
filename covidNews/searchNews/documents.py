@@ -14,30 +14,32 @@ es = Elasticsearch(['http://' + ip])
 
 def display_news(es):
 
-    query = {'size': 15, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
+    query = {'size': 1000, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
     
-    data = es.search(index="news-articles", body=query)
+    data = es.search(index="news-articles3", body=query)
     articles = data['hits']['hits']
    
     article_list = []
+    list_words = ['covid-19', 'covid19' 'virus', 'coronavirus', 'pandemic']
 
     for article in articles:
         new_article = article['_source']
         
-        article_dict = {'source': new_article['source_name'],
-                        'title': new_article['title'],
-                        'description': new_article['description'],
-                        'url': new_article['url'],
-                        'publication_date': new_article['publishedAt'][:10]}
-              
-        article_list.append(article_dict)
+        if any(word in (new_article['title']).lower() for word in list_words):
+            article_dict = {'source': new_article['source_name'],
+                            'title': new_article['title'],
+                            'description': new_article['description'],
+                            'url': new_article['url'],
+                            'publication_date': new_article['publishedAt'][:10]}
+                  
+            article_list.append(article_dict)
         
-    return article_list
+    return article_list[:16]
 
 def daily_sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-sentiment', body=query)
+    data = es.search(index='news-articles3', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -69,7 +71,7 @@ def daily_sent_analysis():
 def sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-sentiment', body=query)
+    data = es.search(index='news-articles3', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -101,5 +103,5 @@ def sent_analysis():
         except:
             continue
     
-    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)} 
+    return {'positive': len(positive), 'negative': len(negative)} 
 
