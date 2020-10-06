@@ -1,29 +1,19 @@
+'''Cron job to call News API at 11 pm PST and seed the database daily'''
+
 import os
 from elasticsearch import Elasticsearch
 import requests
-from dataclasses import dataclass
-import json
-from datetime import datetime, date
-from requests import get
-import uuid
-from searchNews.seed import addarticles, callNewsApi
+from pytz import timezone
+import datetime
+from seed import seed_daily
 
-# from seed import *
+def call_api():
+	
+	ip = os.environ.get('IP')
+	es = Elasticsearch(['http://'+ip])
+	
+	print('cron =', es.indices.exists(index='news-articles')) # sanity check to see if ES is working
 
-def callapi():
-    key=os.environ.get('API_KEY')
-    ip=os.environ.get('IP')
+	seed_daily()
 
-    # connect to elasticsearch
-    es=Elasticsearch(["http://"+ip])
-    print("cron", es.indices.exists(index="news-articles"))
-
-    startdate = str((datetime.now()).date())
-    response = seed.callNewsApi(startdate, startdate, key)
-    seed.addarticles(response,es)
-    
-
-
-
-
-
+call_api()

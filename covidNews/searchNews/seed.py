@@ -1,33 +1,41 @@
-'''Feed Covid News'''
+'''Feed Covid-19 news to Elasticsearch'''
+
 import os
 from elasticsearch import Elasticsearch
 import requests
-from dataclasses import dataclass
 import json
 from datetime import datetime, date, timedelta
-from os import environ
+from backports.datetime_fromisoformat import MonkeyPatch
+from pytz import timezone
 from goose3 import Goose
-from requests import get
-import uuid
-import dateutil.relativedelta
+from prediction import predict_sentiment
+import hashlib
+MonkeyPatch.patch_fromisoformat()
 
-def get_time(date):
-    # get the time from publishedAt': '2020-06-18T22:24:00Z
+key = os.environ.get('API_KEY')
+ip = os.environ.get('IP')
+es = Elasticsearch(['http://' + ip])
 
-    return (date.split('T'))[1]
+def call_news_api(startdate, enddate, key):
+    '''Call the News API'''
 
-def get_date(date):
-    # get the date from publishedAt': '2020-06-18T22:24:00Z
-    
-    return (date.split('T'))[0]
+    keywords = ['covid-19', 'covid', 'coronavirus']
 
-def callNewsApi(startdate, enddate, key):
-    '''call the news api'''
+    url = (('http://newsapi.org/v2/everything?'
+           'q=' + 
+           ' OR '.join(keywords)) +
+           '&from=' + startdate +
+           '&to=' + enddate +
+           '&language=en' +
+           '&sortBy=popularity' +
+           '&apiKey=' + key)
 
-    return (requests.get("http://newsapi.org/v2/everything?q=Covid+Covid-19+coronavirus&sortBy=popularity&from="+startdate+"&to="+enddate+"&pageSize=20&language=en&apiKey="+key)).json()
+    response = requests.get(url)
 
-def extractText(url):
-    '''extract text'''
+    return response.json()
+
+def extract_text(url):
+    '''Extract text from the URL'''
 
     extractor = Goose()
     extracted_article = extractor.extract(url=url)
@@ -35,76 +43,90 @@ def extractText(url):
 
     return text
 
-def addarticles(response, es):
-    '''add articles to the Elastcisearch'''
+def get_max_fetched_at(es):
+    '''Get date of the last time articles were fetched from the ES database'''
+
+    default_dt = (datetime.now() - timedelta(days=30)).isoformat()
+    query = {'size': 1, 'sort' : [{'fetchedAt' : {'order' : 'desc', 'mode': 'max', 'unmapped_type' : 'keyword'}}]}
+    data = es.search(index="news-articles3", body=query)
+    
+    if data['hits']['hits']:
+        return data['hits']['hits'][0]['_source'].get('fetchedAt', default_dt)
+    
+    return default_dt
+
+def add_articles(response, es, fetched_at):
+    '''Add articles with unique IDs to Elasticsearch'''
 
     dic_article={}
-    for article in response["articles"]:
-        # try:
-        if article["source"]["name"] != "null":
-            dic_article["source_name"] = article["source"]["name"]
 
-        if article["description"] != "null":
-            dic_article["description"] = article["description"]
+    for article in response['articles']:
+        if article['source']['name'] != 'null':
+            dic_article['source_name'] = article['source']['name']
 
-        if article["author"] != "null":
-            dic_article["author"] = article["author"]
+        if article['description'] != 'null':
+            dic_article['description'] = article['description']
 
-        if article["title"] != "null":
-            dic_article["title"] = article["title"]
+        if article['author'] != 'null':
+            dic_article['author'] = article['author']
 
-        if article["url"] != "null":
-            request = requests.get(article["url"])
-            # check if the url is valid
+        if article['title'] != 'null':
+            dic_article['title'] = article['title']
+
+        if article['url'] != 'null':
+            request = requests.get(article['url'])
+
             if request.status_code == 200:
-                dic_article["url"] = article["url"]
+                dic_article['url'] = article['url']
             else:
                 continue
 
-        if article["publishedAt"] != "null":
-            # publishedAt': '2020-06-18T22:24:00Z'
-            dic_article["publishedAt"] = str(get_date(article["publishedAt"])).replace(" ", "")
-            dic_article["timeAt"] = str(get_time(article["publishedAt"])).replace(" ", "")
-            
-        # extract the article from its URL
-        text = extractText(article["url"])
-        dic_article["content"] = text
-        
-        # get the new id
-        new_id = str(uuid.uuid4())
+        if article['publishedAt'] != 'null':
+            dic_article['publishedAt'] = str(article['publishedAt'][:10]).replace(' ', '')
+            dic_article['timeAt'] = str(article['publishedAt'][11:19]).replace(' ', '')
 
-        # add to elasticsearch
-        a = es.index(index="news-articles2", id=new_id, body=dic_article)
+        dic_article['createdAt'] = datetime.now().isoformat()
+        dic_article['fetchedAt'] = fetched_at
+    
+        text = extract_text(article['url'])
+        dic_article['content'] = text
+        
+        new_id = hashlib.md5(dic_article['url'].encode()).hexdigest() 
+        print(dic_article['publishedAt'])
+    
+        a = es.index(index="news-articles3", id=new_id, body=dic_article)
         print('the result', a['result'])
 
-        # except:
-        #     continue
+def seed_daily():
+    '''Create indices and populate the database'''
+    
+    if not es.indices.exists(index="news-articles3"):
+        es.indices.create(index="news-articles3", ignore=400) 
+    
+    max_fetched_at = get_max_fetched_at(es)
+    dt = datetime.fromisoformat(max_fetched_at)
+
+    last_fetched_at = str(dt.date().isoformat())
+    new_fetched_at = str(datetime.utcnow().date())
+
+    # get the last published article 
+    query = {'size': 1, 'sort' : [{'publishedAt' : {'order' : 'desc', 'mode': 'max', 'unmapped_type' : 'keyword'}}]}
+    data = es.search(index="news-articles3", body=query)
+    last_published_at = data['hits']['hits'][0]['_source']['publishedAt']
+
+    # call news api
+    if last_fetched_at == last_published_at:   
+        response = call_news_api(last_fetched_at, new_fetched_at, key)
+    else:
+        response = call_news_api(last_published_at, new_fetched_at, key)
+
+    # add the articles to the elasticsearch
+    add_articles(response, es, new_fetched_at)
+
+    # predict sentiments
+    query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
+    data = es.search(index="news-articles3", body=query)
+
+    predict_sentiment(data, es)
 
 
-def feedEs():
-    '''connect to the Elasticsearch, create the index and feed the data to the elasticsearch'''
-
-    key = os.environ.get('API_KEY')
-    ip = os.environ.get('IP')
-
-    # connect to elasticsearch
-    es = Elasticsearch(["http://"+ip])
-
-    # create an index
-    if not es.indices.exists(index="news-articles2"):
-        es.indices.create(index='news-articles2', ignore=400) 
-
-    # get today's date and a date of a month ago 
-    now = datetime.now()
-    lastMonth = now + dateutil.relativedelta.relativedelta(months=-1)
-    number_days = (now - lastMonth).days
-
-    for i in range(1,number_days+1):
-        search_date = str((lastMonth + timedelta(days=i)).date())  
-        response = callNewsApi(search_date, search_date, key)
-        addarticles(response, es)
-        
-if __name__ == "__main__":
-    feedEs()
-
-   

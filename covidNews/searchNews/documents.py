@@ -1,26 +1,45 @@
-'''Covid News'''
+'''Covid-19 News Landing Page'''
+
 import os
 from elasticsearch import Elasticsearch
 import requests
-from dataclasses import dataclass
 import json
-from datetime import datetime, date, timedelta
-from elasticsearch import Elasticsearch
-from requests import get
-import uuid
-import dateutil.relativedelta
+from pytz import timezone
+import datetime
 
+key = os.environ.get('API_KEY')
+ip = os.environ.get('IP')
 
-def dailySentAnalysis():
+es = Elasticsearch(['http://' + ip])
 
-    # connect to elasticsearch
-    ip = os.environ.get('IP')
-    es = Elasticsearch(["http://"+ip])
+def display_news(es):
 
+    query = {'size': 1000, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
+    
+    data = es.search(index="news-articles3", body=query)
+    articles = data['hits']['hits']
+   
+    article_list = []
+    list_words = ['covid-19', 'covid19' 'virus', 'coronavirus', 'pandemic']
 
-    query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment2", body=query)
+    for article in articles:
+        new_article = article['_source']
+        
+        if any(word in (new_article['title']).lower() for word in list_words):
+            article_dict = {'source': new_article['source_name'],
+                            'title': new_article['title'],
+                            'description': new_article['description'],
+                            'url': new_article['url'],
+                            'publication_date': new_article['publishedAt'][:10]}
+                  
+            article_list.append(article_dict)
+        
+    return article_list[:16]
 
+def daily_sent_analysis():
+
+    query = {'size': 1000, 'query':{'match_all' : {}}}
+    data = es.search(index='news-articles3', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -47,25 +66,12 @@ def dailySentAnalysis():
         if sent == 0 :
             add(key, articles, 'neutral')
 
-    print(articles)
     return articles
+ 
+def sent_analysis():
 
-    # if key in articles:
-    #     articles[key].append({'description':article['_source']['description'],
-    #                 'sentiment':article['_source']['sentiment']})
-    # else:
-    #     articles[key] = [{'description':article['_source']['description'],
-    #                 'sentiment':article['_source']['sentiment']}]
-
-def sentAnalysis():
-    
-    # connect to elasticsearch
-    ip = os.environ.get('IP')
-
-    es = Elasticsearch(["http://"+ip])
-
-    query = {"size": 1000,"query":{"match_all" : {}}}
-    data = es.search(index="news-sentiment2", body=query)
+    query = {'size': 1000, 'query':{'match_all' : {}}}
+    data = es.search(index='news-articles3', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -73,8 +79,8 @@ def sentAnalysis():
     neutral = []    
     positive = []
     negative = []
-    # create a dictionary of articles and sentiments 
-    for article in data['hits']['hits']: 
+
+    for article in data['hits']['hits']:
         try:
             if article['_source']['sentiment'] == 0:
                 article = {'description':article['_source']['description'],
@@ -93,33 +99,9 @@ def sentAnalysis():
                             'publishedAt':article['_source']['publishedAt']
                 }
                 positive.append(article)
+       
         except:
             continue
-      
-    return {'positive': len(positive), 'negative': len(negative), 'neutral': len(neutral)}
-
-def displayNews():
-
-    key=os.environ.get('API_KEY')
-
-
-    payload = {"q": "Covid", "from": "2020-09-01", "sortBy": "publishedAt", "language": "en", "apiKey": key}
-
-    url = requests.get("http://newsapi.org/v2/top-headlines", params=payload).json()
-    print(key, url)
-    articles = url["articles"]
-    article_list = []
-      
-    for article in articles:
-
-        article_dict = {'source': article["source"],
-                        'title': article["title"],
-                        'description': article["description"],
-                        'url': article["url"],
-                        'url_img': article["urlToImage"],
-                        'publication_date': article["publishedAt"][:10]}
-          
-        article_list.append(article_dict)
-
-    return article_list 
+    
+    return {'positive': len(positive), 'negative': len(negative)} 
 

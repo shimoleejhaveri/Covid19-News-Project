@@ -1,24 +1,30 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from searchNews.documents import sentAnalysis, dailySentAnalysis, displayNews
+from searchNews.documents import sent_analysis, daily_sent_analysis, display_news
+import os
+from elasticsearch import Elasticsearch
 
-def searchForNews(request):
+def search_for_news(request):
 
-    data = sentAnalysis()
+    data = sent_analysis()
     return JsonResponse(data)
 
-def searchForDates(request):
+def search_for_dates(request):
 
-    data = dailySentAnalysis()
+    data = daily_sent_analysis()
     return JsonResponse(data)
 
-def viewNews(request):
+def view_news(request):
 
-    posts = displayNews()
-    context = {
-        'posts': posts
-    }
-    return render(request, 'news/base.html', context)
+	ip = os.environ.get('IP')
+	es = Elasticsearch(['http://' + ip])
 
+	posts = display_news(es)
+	context = {
+		'posts': posts
+	}
+	return render(request, 'news/base.html', context)
 
-#  HttpResponse(res)
+def about(request):
+
+	return render(request, 'news/about.html')
