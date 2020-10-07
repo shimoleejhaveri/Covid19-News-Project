@@ -19,7 +19,7 @@ es = Elasticsearch(['http://' + ip])
 def call_news_api(startdate, enddate, key):
     '''Call the News API'''
 
-    keywords = ['covid-19', 'covid', 'coronavirus']
+    keywords = ['covid-19', 'covid', 'coronavirus', 'pandemic']
 
     url = (('http://newsapi.org/v2/everything?'
            'q=' + 
@@ -31,7 +31,7 @@ def call_news_api(startdate, enddate, key):
            '&apiKey=' + key)
 
     response = requests.get(url)
-
+    print(response.json())
     return response.json()
 
 def extract_text(url):
@@ -117,16 +117,24 @@ def seed_daily():
     # call news api
     if last_fetched_at == last_published_at:   
         response = call_news_api(last_fetched_at, new_fetched_at, key)
+        # add the articles to the elasticsearch
+        add_articles(response, es, new_fetched_at)
+        # predict sentiments
+        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
+        data = es.search(index="news-articles3", body=query)
+        predict_sentiment(data, es)
     else:
         response = call_news_api(last_published_at, new_fetched_at, key)
+        # add the articles to the elasticsearch
+        add_articles(response, es, new_fetched_at)
+        # predict sentiments
+        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
+        data = es.search(index="news-articles3", body=query)
+        predict_sentiment(data, es)
 
-    # add the articles to the elasticsearch
-    add_articles(response, es, new_fetched_at)
+    
 
-    # predict sentiments
-    query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
-    data = es.search(index="news-articles3", body=query)
-
-    predict_sentiment(data, es)
+    
+seed_daily()
 
 

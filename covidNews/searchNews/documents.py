@@ -20,7 +20,10 @@ def display_news(es):
     articles = data['hits']['hits']
    
     article_list = []
-    list_words = ['covid-19', 'covid19' 'virus', 'coronavirus', 'pandemic']
+    list_words = ['covid-19', 'covid19' 'virus', 'coronavirus', \
+    'pandemic', 'sars', 'sars-cov-2', 'endemic', 'epidemic', 'quarantine', \
+    'vaccine', 'asymptomatic', 'incubation', 'spread', 'containment',\
+     'pneumonia', 'disease']
 
     for article in articles:
         new_article = article['_source']
@@ -34,7 +37,7 @@ def display_news(es):
                   
             article_list.append(article_dict)
         
-    return article_list[:16]
+    return article_list[:20]
 
 def daily_sent_analysis():
 
@@ -47,24 +50,27 @@ def daily_sent_analysis():
     articles = {}
 
     for article in data['hits']['hits']: 
-        key = article['_source']['publishedAt']
-        sent = article['_source']['sentiment']
+        try:
+            key = article['_source']['publishedAt']
+            sent = article['_source']['sentiment']
 
-        def add(key, articles, sent):
-            if key in articles:
-                articles[key][sent] += 1
-            else:
-                articles[key] = {'positive':0, 'neutral':0, 'negative':0}
-                articles[key][sent] += 1
+            def add(key, articles, sent):
+                if key in articles:
+                    articles[key][sent] += 1
+                else:
+                    articles[key] = {'positive':0, 'neutral':0, 'negative':0}
+                    articles[key][sent] += 1
 
-            return articles
-   
-        if sent == 1 :
-            add(key, articles, 'negative')
-        if sent == 2 :
-            add(key, articles, 'positive')
-        if sent == 0 :
-            add(key, articles, 'neutral')
+                return articles
+       
+            if sent == 1 :
+                add(key, articles, 'negative')
+            if sent == 2 :
+                add(key, articles, 'positive')
+            if sent == 0 :
+                add(key, articles, 'neutral')
+        except:
+            continue
 
     return articles
  
