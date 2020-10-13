@@ -15,5 +15,3 @@ def call_api():
 	print('cron =', es.indices.exists(index='news-articles')) # sanity check to see if ES is working
 
 	seed_daily()
-
-call_api()

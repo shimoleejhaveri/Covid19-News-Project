@@ -1,4 +1,5 @@
 
+
 let endpoint1 = 'newsBySentiment'
 
 $.ajax({
@@ -12,7 +13,7 @@ $.ajax({
     const list_colors = ["#3cba9f", "#FF0000", "#3e95cd"]
     // "#8e5ea2", , "#e8c3b9", "#c45850"
     const list_sent = Object.keys(data);
-    const list_sum = Object.values(data)
+    const list_sum = Object.values(data);
 
     new Chart(canvas, {
       type: 'doughnut',
@@ -50,7 +51,7 @@ $.ajax({
     console.log(data)
     
 
-    list_days = Object.keys(data)
+    list_days = (Object.keys(data)).sort()
     list_nember_p = []
     list_nember_neg = []
     list_nember_neu = []
@@ -83,13 +84,6 @@ $.ajax({
             data: list_nember_p,
             yAxisID: 'y-axis-1'
         }, {
-            label: 'Neutral ',
-            borderColor: window.chartColors.blue,
-            backgroundColor: window.chartColors.blue,
-            fill: false,
-            data: list_nember_neu,
-            yAxisID: 'y-axis-1'
-        }, {
             label: 'Negative ',
             borderColor: window.chartColors.red,
             backgroundColor: window.chartColors.red,
@@ -108,14 +102,12 @@ $.ajax({
           stacked: false,
           scales: {
               yAxes: [{
-                  type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                  type: 'linear', 
                   display: true,
                   position: 'left',
                   id: 'y-axis-1',
-
-                  // grid line settings
                   gridLines: {
-                      drawOnChartArea: true, // only want the grid lines for one axis to show up
+                      drawOnChartArea: true,
                   },
               }],
           }

@@ -15,11 +15,15 @@ html {
 }
 
 body {
-  background: #fff;
+  background-color: #f0f0f0;
+  background-image: url('../img/img1.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
   font-size: 16px;
   font-weight: 300;
   font-family: Rubik, sans-serif;
-  line-height: 1.8;color:#7e8890;
+  line-height: 1.8;
+  /*color:#7e8890;*/
 }
 
 h1, h2, h3, h4, h5 {
@@ -97,7 +101,7 @@ a.article-title:hover {
 
 .news-logo {
   float: left;
-  color: #fff;
+ /* color: #fff;*/
   padding-left: 60px;
   font-size: 20px;
   display: block;
@@ -112,16 +116,16 @@ a.article-title:hover {
 @media screen and (max-width:768px) {
   .news-logo {
     padding-left: 0;
-    }
+  }
 }
 
 .news-intro {
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: relative;
-  top: 0;
-  height: 800px;
-  overflow: hidden;
+  /*background-size: cover;
+  background-repeat: no-repeat;*/
+  /*position: relative;*/
+  /*top: 0;*/
+  height: 70px;
+  /*overflow: hidden;*/
 } 
 
 .dev-img {
@@ -135,6 +139,48 @@ a.article-title:hover {
   overflow: hidden;
 }
 
+/*.collapsible {
+  background-color: #777;
+  color: white;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  border: none;
+  text-align: left;*/
+  /*outline: none;*/
+  /*font-size: 15px;
+
+  width: 100%;
+  z-index: 4;
+  position: absolute;
+  background: rgba(0,0,0,.15);
+  -webkit-transition: .8s all ease-out;
+  transition: .8s all ease-out;
+}
+*/
+/*.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.collapsible:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+*/
 .news-section, .about-section {
   padding: 5em 0;
   position: relative;
@@ -157,12 +203,12 @@ a.article-title:hover {
 }
 
 .news-footer .back-to-top, .about-footer .back-to-top {
-  text-align: center;
+  text-align: right;
 }
 
 @media screen and (max-width:768px) {
   .news-footer .back-to-top, .about-footer .back-to-top {
-    text-align: center;
+    text-align: right;
     margin-top: 30px;
   }
 }

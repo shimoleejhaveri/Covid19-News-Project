@@ -1,18 +1,18 @@
 '''Sentiment Analysis of News Data'''
 
-import joblib
-import pandas as pd 
-from model import tfidf as tfidf
 import csv
 import os
+import joblib
+import pandas as pd 
 from elasticsearch import Elasticsearch
 from datetime import datetime
 import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
  
 def predict_sentiment(data, es):
     
     if data['hits']['hits'] == []:
-        print('empty list')
+        print('Elasticsearch is empty')
         return 
     
     dic_articles = {'Id':[],
@@ -31,7 +31,8 @@ def predict_sentiment(data, es):
     df = pd.DataFrame.from_dict(dic_articles)
     df_x = df['Description']
 
-    tfidf = pickle.load(open("tfidf2.pk", "rb"))
+    # get the tfidf.pk
+    tfidf = pickle.load(open("tfidf.pk", "rb"))
 
     # Create new tfidfVectorizer with old vocabulary
     tf_new = TfidfVectorizer(sublinear_tf=True, min_df=5,
@@ -46,22 +47,24 @@ def predict_sentiment(data, es):
     loaded_model = joblib.load(filename)
     df_y = loaded_model.predict(features)
 
-    # create an index
-    if not es.indices.exists(index='news-sentiment'):
-        es.indices.create(index='news-sentiment', ignore=400) 
-
     dic_sentiments={}
-    
-    # add articles to the Elasticsearch index
+
     for i in range(0, len(df_x)):
         try:
             # create a dic of new data with sentiment
-            dic_sentiments['description'] = df['Description'][i]
-            dic_sentiments['content'] = df_x[i]
+            dic_sentiments['description'] = df_x[i]
+            dic_sentiments['content'] = df['Content'][i]
             dic_sentiments['publishedAt'] = df['PublishedAt'][i]
             dic_sentiments['sentiment'] = df_y[i]
 
-            # add to elasticsearch
-            article = es.index(index='news-sentiment', id=df['Id'][i], body=dic_sentiments)
+            res = es.get(index="news-articles", id=df['Id'][i])
+
+            dic_article_by_id = res['_source']
+            if dic_article_by_id:
+                dic_article_by_id['sentiment'] = df_y[i]
+
+                # update elasticsearch with the sentiment
+                response = es.index(index="news-articles", id=df['Id'][i], body=dic_article_by_id)
+
         except:
             continue

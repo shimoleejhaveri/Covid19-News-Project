@@ -14,24 +14,24 @@ MonkeyPatch.patch_fromisoformat()
 
 key = os.environ.get('API_KEY')
 ip = os.environ.get('IP')
-
 es = Elasticsearch(['http://' + ip])
 
-def call_news_api(startdate, key):
+def call_news_api(startdate, enddate, key):
     '''Call the News API'''
 
-    keywords = ['covid-19', 'covid', 'coronavirus']
+    keywords = ['covid-19', 'covid', 'coronavirus', 'pandemic']
 
     url = (('http://newsapi.org/v2/everything?'
            'q=' + 
            ' OR '.join(keywords)) +
            '&from=' + startdate +
+           '&to=' + enddate +
            '&language=en' +
            '&sortBy=popularity' +
            '&apiKey=' + key)
 
     response = requests.get(url)
-
+    print(response.json())
     return response.json()
 
 def extract_text(url):
@@ -51,7 +51,7 @@ def get_max_fetched_at(es):
     data = es.search(index="news-articles", body=query)
     
     if data['hits']['hits']:
-        data['hits']['hits'][0].get('fetchedAt', default_dt)
+        return data['hits']['hits'][0]['_source'].get('fetchedAt', default_dt)
     
     return default_dt
 
@@ -59,8 +59,6 @@ def add_articles(response, es, fetched_at):
     '''Add articles with unique IDs to Elasticsearch'''
 
     dic_article={}
-
-    # print("HELLO")
 
     for article in response['articles']:
         if article['source']['name'] != 'null':
@@ -94,25 +92,37 @@ def add_articles(response, es, fetched_at):
         dic_article['content'] = text
         
         new_id = hashlib.md5(dic_article['url'].encode()).hexdigest() 
+        print(dic_article['publishedAt'])
     
         a = es.index(index="news-articles", id=new_id, body=dic_article)
+        print('the result', a['result'])
 
 def seed_daily():
-    '''Connect to Elasticsearch, create indices and populate the database'''
+    '''Add articles to Elasticsearch and predict sentiments'''
     
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
     max_fetched_at = get_max_fetched_at(es)
     dt = datetime.fromisoformat(max_fetched_at)
-    last_fetched_at = dt.date().isoformat()
-    new_fetched_at = datetime.utcnow()
-   
-    response = call_news_api(last_fetched_at, key)
 
-    add_articles(response, es, new_fetched_at)
+    last_fetched_at = str(dt.date().isoformat())
+    new_fetched_at = str(datetime.utcnow().date())
 
-    query = {'size': 500, 'query': {'match_all': {}}}
+    query = {'size': 1, 'sort' : [{'publishedAt' : {'order' : 'desc', 'mode': 'max', 'unmapped_type' : 'keyword'}}]}
     data = es.search(index="news-articles", body=query)
+    last_published_at = data['hits']['hits'][0]['_source']['publishedAt']
 
-    predict_sentiment(data, es)
+    if last_fetched_at == last_published_at:   
+        response = call_news_api(last_fetched_at, new_fetched_at, key)
+        add_articles(response, es, new_fetched_at)
+        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
+        data = es.search(index="news-articles", body=query)
+        predict_sentiment(data, es)
+    
+    else:
+        response = call_news_api(last_published_at, new_fetched_at, key)
+        add_articles(response, es, new_fetched_at)
+        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
+        data = es.search(index="news-articles", body=query)
+        predict_sentiment(data, es)
