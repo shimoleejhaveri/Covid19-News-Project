@@ -9,40 +9,42 @@ from seed import add_articles
 from prediction import predict_sentiment
 
 def populate_database():
-	
-    key = os.environ.get('API_KEY')
-    ip = os.environ.get('IP')
 
-    es = Elasticsearch(['http://'+ip])
+  key = os.environ.get('API_KEY')
+  ip = os.environ.get('IP')
 
-    today = datetime.datetime.now()
-    now = str(today)[:10]
-    lmonth = today - datetime.timedelta(days=30)
-    last_month = str(today - datetime.timedelta(days=30))[:10]
+  es = Elasticsearch(['http://'+ip])
 
-    keywords = ['covid-19', 'covid', 'coronavirus']
+  today = datetime.datetime.now()
+  now = str(today)[:10]
+  lmonth = today - datetime.timedelta(days=30)
 
-    for single_date in (lmonth + datetime.timedelta(days=n) for n in range(30)):
-        todays_date = str(single_date)[:10]
-        print('single_date', single_date, todays_date)
-        url = (('http://newsapi.org/v2/everything?'
-               'q=' + 
-               ' OR '.join(keywords)) +
-               '&from=' + todays_date +
-               '&to=' + todays_date +
-               '&language=en' +
-               '&sortBy=popularity' +
-               '&apiKey=' + key)
+  keywords = ['covid-19', 'covid', 'coronavirus', 'pandemic']
 
-        info = requests.get(url)
-        response = info.json()
+  for single_date in (lmonth + datetime.timedelta(days=n) for n in range(31)):
+    try:
+      todays_date = str(single_date)[:10]
+      print('single_date', single_date, todays_date)
+      url = (('http://newsapi.org/v2/everything?'
+             'q=' + 
+             ' OR '.join(keywords)) +
+             '&from=' + todays_date +
+             '&to=' + todays_date +
+             '&language=en' +
+             '&sortBy=popularity' +
+             '&apiKey=' + key)
 
-        add_articles(response, es, now)
+      info = requests.get(url)
+      response = info.json()
 
-        query = {'size': 4, 'query': {'match_all' : {}}}
-        data = es.search(index='news-articles3', body=query)
+      add_articles(response, es, now)
 
-        predict_sentiment(data, es)
+      query = {'size': 10000, "query": {"range": {"publishedAt": {"from": todays_date, "to": todays_date}}}}
+      data = es.search(index='news-articles', body=query)
+
+      predict_sentiment(data, es)
+    except:
+      continue
 
 if __name__ == '__main__':
 	populate_database()

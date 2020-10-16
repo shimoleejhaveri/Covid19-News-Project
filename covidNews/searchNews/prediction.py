@@ -22,7 +22,9 @@ def predict_sentiment(data, es):
                     }
     
     # create a dataframe for each date and description 
-    for article in data['hits']['hits']: 
+    count = 0
+    for article in data['hits']['hits']:
+        count += 1 
         dic_articles['Id'].append(article['_id'])
         dic_articles['Description'].append(article['_source']['description'])
         dic_articles['Content'].append(article['_source']['content'])
@@ -47,27 +49,24 @@ def predict_sentiment(data, es):
     loaded_model = joblib.load(filename)
     df_y = loaded_model.predict(features)
 
-    dic_sentiments={}
-
+    count2 = 0
     for i in range(0, len(df_x)):
         try:
-            # create a dic of new data with sentiment
-            dic_sentiments['description'] = df_x[i]
-            dic_sentiments['content'] = df['Content'][i]
-            dic_sentiments['publishedAt'] = df['PublishedAt'][i]
-            dic_sentiments['sentiment'] = df_y[i]
 
-            res = es.get(index="news-articles3", id=df['Id'][i])
+            res = es.get(index="news-articles", id=df['Id'][i])
 
             dic_article_by_id = res['_source']
             if dic_article_by_id:
                 dic_article_by_id['sentiment'] = df_y[i]
 
                 # update elasticsearch with the sentiment
-                response = es.index(index="news-articles3", id=df['Id'][i], body=dic_article_by_id)
+                response = es.index(index="news-articles", id=df['Id'][i], body=dic_article_by_id)
+                print(df_y[i], "index created")
+                count2 += 1
 
         except:
             continue
+    print('data',count , 'df_x', len(df_x), 'after analysis', count2)
 
 
 
