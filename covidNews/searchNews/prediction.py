@@ -52,7 +52,6 @@ def predict_sentiment(data, es):
     count2 = 0
     for i in range(0, len(df_x)):
         try:
-
             res = es.get(index="news-articles", id=df['Id'][i])
 
             dic_article_by_id = res['_source']

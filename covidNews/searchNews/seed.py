@@ -98,13 +98,8 @@ def add_articles(response, es, fetched_at):
         print('the result', a['result'])
 
 def seed_daily():
-<<<<<<< HEAD
     '''Add articles to Elasticsearch and predict sentiments'''
 
-=======
-    '''Create indices and populate the database'''
-    
->>>>>>> 51dcb99c2238256df4c88c819a1f00f33577be6c
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
