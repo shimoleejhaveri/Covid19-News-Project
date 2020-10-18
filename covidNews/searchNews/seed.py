@@ -31,7 +31,7 @@ def call_news_api(startdate, enddate, key):
            '&apiKey=' + key)
 
     response = requests.get(url)
-    print(response.json())
+
     return response.json()
 
 def extract_text(url):
@@ -98,8 +98,13 @@ def add_articles(response, es, fetched_at):
         print('the result', a['result'])
 
 def seed_daily():
+<<<<<<< HEAD
     '''Add articles to Elasticsearch and predict sentiments'''
 
+=======
+    '''Create indices and populate the database'''
+    
+>>>>>>> 51dcb99c2238256df4c88c819a1f00f33577be6c
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
@@ -123,7 +128,12 @@ def seed_daily():
     else:
         response = call_news_api(last_published_at, new_fetched_at, key)
         add_articles(response, es, new_fetched_at)
-        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
+
+        # predict sentiments
+        query = {'size': 10000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
         predict_sentiment(data, es)
+    
 
+if __name__ == '__main__':    
+    seed_daily()
