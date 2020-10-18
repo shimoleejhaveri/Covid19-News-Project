@@ -9,7 +9,8 @@
   <!-- START: header -->
   <header role="banner" class="news-header">
     <div class="container-fluid">
-      <div class="col-md-12 text-center news-logo">Sentiment Analysis of Covid-19 News
+      <div class="col-md-12 text-center news-logo">Covid-19 News
+        <span class="line"></span>
       </div>
     </div>
   </header>
@@ -22,8 +23,8 @@
   <!-- START: main -->
   <main>
     <div class="text-center mb10">
-      <h3>How It Works</h3>
-      <h6><p>Our models are trained using headlines of news articles related to Covid-19 or coronavirus. <p>Positive sentiment indicates good news, negative sentiment indicates bad news, and netural sentiment indicates informational news.</p></p></h6>
+      <h4>How It Works</h4>
+      <h6><p class="text-mute mb20">Our models are trained using headlines of news articles related to Covid-19 or coronavirus to calculate the sentiment behind them.</p></h6>
     </div>
 
     <!-- <button class="collapsible text-center mb10"><h3>How It Works</h3></button>
@@ -51,26 +52,24 @@
         <script src="/static/news/js/chart.js"></script>
         <div class="row">
           <div class="col-md-6 text-center mb50">
-            <h3 class="mt0" id="chart1">Historical Statistic</h3>
+            <h4 class="mt0" id="chart1">Historical Statistic</h4>
           </div>
           <div class="col-md-6 text-center mb50">
-            <h3 class="mt0" id="chart2">Daily Statistic</h3>
+            <h4 class="mt0" id="chart2">Daily Statistic</h4>
           </div>
         </div>
+        <span class="line"></span>
         <div class="row">
           <div class="col-md-12 text-center mb20">
-            <h3>Latest News</h3>
+            <h4>Latest News</h4>
           </div>
         </div>
       </div> 
       <div class="row" style="padding-left: 30px; padding-right: 30px;">
         {% for post in posts %}
-          {% if forloop.counter|divisibleby:"3" %}
-            <div class="col-md-12"></div>
-          {% endif %}
           <div class="col-md-4">
             <div class="news-text">
-              <h3 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h3>
+              <h4 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h4>
               <p class="article-content">{{ post.description }}</p>
               <p class="text-mute mb20">
                 <b>{{ post.source.name }}</b>
@@ -88,11 +87,8 @@
   <footer class="news-footer">
     <div class="container">
       <div class="row">
-        <div class="col-md-6">
-          <p class="mb0"><a href="/about">Meet the Developers</a></p>
-        </div>
-        <div class="col-md-6">
-          <p class="mb0 back-to-top"><a href="#" class="js-backtotop">Back to top</a></p>
+        <div class="col-md-12 offset-5">
+          <p><a href="/about">Meet the Developers</a></p>
         </div>
       </div>
     </div>

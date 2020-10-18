@@ -16,7 +16,7 @@ html {
 
 body {
   background-color: #f0f0f0;
-  background-image: url('../img/img1.jpg');
+  /*background-image: url('../img/img1.jpg');*/
   background-repeat: no-repeat;
   background-size: cover;
   font-size: 16px;
@@ -85,19 +85,25 @@ a.article-title:hover {
 }
 
 .news-header {
-  padding-top: 30px;
-  padding-bottom: 30px;
+  /*padding-top: px;*/
+  font-family: Century Gothic, sans-serif;
+  /*padding-bottom: 30px;*/
   width: 100%;
   z-index: 4;
   position: absolute;
-  background: rgba(0,0,0,.15);
+  /*background: rgba(0,0,0,.15);*/
   -webkit-transition: .8s all ease-out;
   transition: .8s all ease-out;
 }
 
-.news-header:active, .news-header:focus, .news-header:hover {
-  background: rgba(0,0,0,.55);
+.line {
+  border-bottom: 5px solid #ccc;
+  display: block;
 }
+
+/*.news-header:active, .news-header:focus, .news-header:hover {
+  background: rgba(0,0,0,.55);
+}*/
 
 .news-logo {
   float: left;
@@ -124,9 +130,13 @@ a.article-title:hover {
   background-repeat: no-repeat;*/
   /*position: relative;*/
   /*top: 0;*/
-  height: 70px;
+  height: 30px;
   /*overflow: hidden;*/
 } 
+
+.dev {
+  height: 200px;
+}
 
 .dev-img {
   background-size: 50%;
@@ -182,12 +192,11 @@ a.article-title:hover {
 }
 */
 .news-section, .about-section {
-  padding: 5em 0;
   position: relative;
   z-index: 2;
 }
 
-.news-footer, .about-footer{
+.news-footer, .about-footer {
   padding: 3em 0;
   background: #000;
   position: relative;
@@ -199,7 +208,7 @@ a.article-title:hover {
 }
 
 .news-footer, .about-footer a:hover {
-  color: #fff !important;
+  color: #ffffff !important;
 }
 
 .news-footer .back-to-top, .about-footer .back-to-top {

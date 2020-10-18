@@ -99,7 +99,7 @@ def add_articles(response, es, fetched_at):
 
 def seed_daily():
     '''Add articles to Elasticsearch and predict sentiments'''
-    
+
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
@@ -126,3 +126,4 @@ def seed_daily():
         query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
         predict_sentiment(data, es)
+

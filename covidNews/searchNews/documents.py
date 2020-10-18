@@ -109,4 +109,4 @@ def sent_analysis():
         except:
             continue
     
-    return {'positive': len(positive), 'negative': len(negative)} 
+    return {'positive': len(positive), 'negative': len(negative)}
