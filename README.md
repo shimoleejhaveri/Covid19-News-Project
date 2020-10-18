@@ -1,4 +1,4 @@
-# Covid19-News-Project
+# Covid19 News
 # <img src="https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img2.jpg" width="80%" alt="CovidNews">
 # Sentiment Analysis of Covid-19 News
 
@@ -27,6 +27,7 @@ http://covid19news.com/
 * jQuery
 ## <a name="api"></a>APIs
 * News API
+* Twitter API
 * Diffbot Article API
 
 ## <a name="features"></a>Features
