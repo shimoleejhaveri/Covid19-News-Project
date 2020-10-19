@@ -6,92 +6,72 @@
 {% endblock %}
 
 {% block body %}
-  <!-- START: header -->
-  <header role="banner" class="news-header">
+<!-- START: header -->
+<header role="banner" class="news-header">
     <div class="container-fluid">
-      <div class="col-md-12 text-center news-logo">Covid-19 News
-        <span class="line"></span>
-      </div>
+        <div class="col-md-12 news-logo">Covid-19 News
+            <span class="line"></span>
+        </div>
     </div>
-  </header>
-  <!-- END: header -->
+</header>
+<!-- END: header -->
 
-  <!-- START: section -->
-  <div class="news-intro"></div>
-  <!-- END: section -->
+<!-- START: section -->
+<div class="news-intro"></div>
+<!-- END: section -->
 
-  <!-- START: main -->
-  <main>
-    <div class="text-center mb10">
-      <h4>How It Works</h4>
-      <h6><p class="text-mute mb20">Our models are trained using headlines of news articles related to Covid-19 or coronavirus to calculate the sentiment behind them.</p></h6>
+<!-- START: main -->
+<main>
+    <div class="text-center" style="padding-top: 20px">
+        <h4>How It Works</h4>
+        <h6><p class="text-mute mb20">Our models are trained using headlines of news articles related to Covid-19 or coronavirus to calculate the sentiment behind them.</p></h6>
     </div>
 
-    <!-- <button class="collapsible text-center mb10"><h3>How It Works</h3></button>
-    <div class="content">
-      <h6><p>Our models are trained using headlines of news articles related to Covid-19 or coronavirus. <p>Positive sentiment indicates good news, negative sentiment indicates bad news, and netural sentiment indicates informational news.</p></p></h6>
-    </div>
-    <script>
-      var coll = document.getElementsByClassName("collapsible");
-      var i;
-
-      for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-          this.classList.toggle("active");
-          var content = this.nextElementSibling;
-          if (content.style.maxHeight){
-            content.style.maxHeight = null;
-          } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-          } 
-        });
-      }
-    </script> -->
     <section class="news-section">
-      <div class="container">
-        <script src="/static/news/js/chart.js"></script>
-        <div class="row">
-          <div class="col-md-6 text-center mb50">
-            <h4 class="mt0" id="chart1">Historical Statistic</h4>
-          </div>
-          <div class="col-md-6 text-center mb50">
-            <h4 class="mt0" id="chart2">Daily Statistic</h4>
-          </div>
-        </div>
-        <span class="line"></span>
-        <div class="row">
-          <div class="col-md-12 text-center mb20">
-            <h4>Latest News</h4>
-          </div>
-        </div>
-      </div> 
-      <div class="row" style="padding-left: 30px; padding-right: 30px;">
-        {% for post in posts %}
-          <div class="col-md-4">
-            <div class="news-text">
-              <h4 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h4>
-              <p class="article-content">{{ post.description }}</p>
-              <p class="text-mute mb20">
-                <b>{{ post.source.name }}</b>
-              {{ post.publication_date }}
-              </p>
+        <div class="container">
+            <script src="/static/news/js/chart.js"></script>
+            <div class="row">
+                <div class="col-md-6 text-center mb50">
+                    <h4 class="mt0" id="chart1">Historical Statistic</h4>
+                </div>
+                <div class="col-md-6 text-center mb50">
+                    <h4 class="mt0" id="chart2">Daily Statistic</h4>
+                </div>
             </div>
-          </div>
-        {% endfor %}
-      </div>
-    </section>
-  </main>
-  <!-- END: main -->
-
-  <!-- START: footer -->
-  <footer class="news-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 offset-5">
-          <p><a href="/about">Meet the Developers</a></p>
+            <span class="line"></span>
+            <div class="row">
+                <div class="col-md-12 text-center mb20">
+                    <h4>Latest News</h4>
+                </div>
+            </div>
+        </div> 
+        <div class="row" style="padding-left: 30px; padding-right: 30px;">
+            {% for post in posts %}
+            <div class="col-md-4">
+                <div class="news-text">
+                    <h4 class="mt0 mb10"><a class="article-title" href="{{ post.url }}" target="_blank">{{ post.title }}</a></h4>
+                    <p class="article-content">{{ post.description }}</p>
+                    <p class="text-mute mb20">
+                        <b>{{ post.source.name }}</b>
+                        {{ post.publication_date }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-      </div>
+    </section>
+</main>
+<!-- END: main -->
+
+<!-- START: footer -->
+<footer class="news-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 offset-5">
+                <p><a href="/about">Meet the Developers</a></p>
+            </div>
+        </div>
     </div>
-  </footer> 
-  <!-- END: footer -->
+</footer> 
+<!-- END: footer -->
 {% endblock %}
