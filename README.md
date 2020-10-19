@@ -1,5 +1,5 @@
 # Covid-19 News
-![alt text] (https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img3.gif "Web App Design")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img3.gif "Web App Design")
 
 ## Deployment (TBD)
 http://covid19news.com/
@@ -39,11 +39,11 @@ http://covid19news.com/
 
 #### Charts
 
-![alt text] (https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img4.gif "Charts")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img4.gif "Charts")
 
 #### News Articles
 
-![alt text] (https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img2.gif "Accessing Articles")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img2.gif "Accessing Articles")
 
 ## <a name="future"></a>Future State
 The project roadmap for Covid-19 News has several features planned out for the next sprint:
