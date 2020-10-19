@@ -38,7 +38,7 @@ def display_news(es):
                   
             article_list.append(article_dict)
         
-    return article_list[:15]
+    return article_list[:9]
 
 def daily_sent_analysis():
     '''Daily Statistic of News Analysis'''
