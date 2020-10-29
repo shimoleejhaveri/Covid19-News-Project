@@ -1,1 +1,1 @@
-web: gunicorn covidNews.covidNews.wsgi
+web: gunicorn covidNews.covidNews.wsgi:application
