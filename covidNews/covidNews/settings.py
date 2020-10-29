@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*eaei56p=3k!ubkb(wz-q-sp4ia-@%z(a!h^%vm*lffx2v6s#!'
+# SECRET_KEY = '*eaei56p=3k!ubkb(wz-q-sp4ia-@%z(a!h^%vm*lffx2v6s#!'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['covidanalysisnewsapp.herokuapp.com']
 
 
 # Application definition
@@ -132,3 +134,5 @@ if os.path.exists('searchNews/secrets.sh'):
     with open('searchNews/secrets.sh') as secret_file:
         CRONTAB_COMMAND_PREFIX = " ".join([line.replace("export ", "").replace("\n", "") 
             for line in secret_file.readlines()])
+        
+django_heroku.settings(locals())
