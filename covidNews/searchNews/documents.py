@@ -13,6 +13,7 @@ ip = os.environ.get('IP')
 es = Elasticsearch(['http://' + ip])
 
 def display_news(es):
+    '''Display news on the UI'''
 
     query = {'size': 1000, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
     
@@ -37,9 +38,10 @@ def display_news(es):
                   
             article_list.append(article_dict)
         
-    return article_list[:17]
+    return article_list[:9]
 
 def daily_sent_analysis():
+    '''Daily Statistic of News Analysis'''
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
     data = es.search(index='news-articles', body=query)
@@ -75,6 +77,7 @@ def daily_sent_analysis():
     return articles
  
 def sent_analysis():
+    '''Historicsl Statistic of News Analysis'''
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
     data = es.search(index='news-articles', body=query)
@@ -109,5 +112,4 @@ def sent_analysis():
         except:
             continue
     
-    return {'positive': len(positive), 'negative': len(negative)} 
-
+    return {'positive': len(positive), 'negative': len(negative)}

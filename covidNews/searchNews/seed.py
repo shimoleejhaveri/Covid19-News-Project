@@ -99,8 +99,8 @@ def add_articles(response, es, fetched_at):
         print('the result', a['result'])
 
 def seed_daily():
-    '''Create indices and populate the database'''
-    
+    '''Add articles to Elasticsearch and predict sentiments'''
+
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
@@ -116,20 +116,18 @@ def seed_daily():
     max_published_at = datetime.fromisoformat(data['hits']['hits'][0]['_source']['publishedAt'])
     last_published_at = str(max_published_at.date() + timedelta(days=1))
 
-    # call news api
     if last_fetched_at == last_published_at:   
         response = call_news_api(last_fetched_at, new_fetched_at, key)
-        # add the articles to the elasticsearch
         add_articles(response, es, new_fetched_at)
-        # predict sentiments
         query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
         print(len([d["_source"] for d in data['hits']['hits']]))  
         predict_sentiment(data, es)
+    
     else:
         response = call_news_api(last_published_at, new_fetched_at, key)
-        # add the articles to the elasticsearch
         add_articles(response, es, new_fetched_at)
+
         # predict sentiments
         query = {'size': 10000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
@@ -139,5 +137,3 @@ def seed_daily():
 
 if __name__ == '__main__':    
     seed_daily()
-
-

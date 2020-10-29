@@ -52,7 +52,6 @@ def predict_sentiment(data, es):
     count2 = 0
     for i in range(0, len(df_x)):
         try:
-
             res = es.get(index="news-articles", id=df['Id'][i])
 
             dic_article_by_id = res['_source']
@@ -61,12 +60,12 @@ def predict_sentiment(data, es):
 
                 # update elasticsearch with the sentiment
                 response = es.index(index="news-articles", id=df['Id'][i], body=dic_article_by_id)
+
                 print(df_y[i], "index created")
                 count2 += 1
 
         except:
             continue
+    
     print('data',count , 'df_x', len(df_x), 'after analysis', count2)
-
-
 
