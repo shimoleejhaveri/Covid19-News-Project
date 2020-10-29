@@ -62,7 +62,7 @@ def add_articles(response, es, fetched_at):
 
     for article in response['articles']:
         if article['source']['name'] != 'null':
-            dic_article['source_name'] = article['source']['name']
+            dic_article['sourceName'] = article['source']['name']
 
         if article['description'] != 'null':
             dic_article['description'] = article['description']
@@ -87,9 +87,10 @@ def add_articles(response, es, fetched_at):
 
         dic_article['createdAt'] = datetime.now().isoformat()
         dic_article['fetchedAt'] = fetched_at
-    
-        text = extract_text(article['url'])
-        dic_article['content'] = text
+        
+        # The content has been removed for simplicity raison
+        # text = extract_text(article['url'])
+        # dic_article['content'] = text
         
         new_id = hashlib.md5(dic_article['url'].encode()).hexdigest() 
         print(dic_article['publishedAt'])
@@ -109,10 +110,11 @@ def seed_daily():
     last_fetched_at = str(dt.date().isoformat())
     new_fetched_at = str(datetime.utcnow().date())
 
-    # get the last published article 
+    # get the date of the last published article 
     query = {'size': 1, 'sort' : [{'publishedAt' : {'order' : 'desc', 'mode': 'max', 'unmapped_type' : 'keyword'}}]}
     data = es.search(index="news-articles", body=query)
-    last_published_at = data['hits']['hits'][0]['_source']['publishedAt']
+    max_published_at = datetime.fromisoformat(data['hits']['hits'][0]['_source']['publishedAt'])
+    last_published_at = str(max_published_at.date() + timedelta(days=1))
 
     # call news api
     if last_fetched_at == last_published_at:   
@@ -122,6 +124,7 @@ def seed_daily():
         # predict sentiments
         query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
+        print(len([d["_source"] for d in data['hits']['hits']]))  
         predict_sentiment(data, es)
     else:
         response = call_news_api(last_published_at, new_fetched_at, key)
@@ -130,6 +133,7 @@ def seed_daily():
         # predict sentiments
         query = {'size': 10000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
         data = es.search(index="news-articles", body=query)
+        print(len([d["_source"] for d in data['hits']['hits']]))  
         predict_sentiment(data, es)
     
 

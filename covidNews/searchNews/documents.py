@@ -16,7 +16,7 @@ def display_news(es):
 
     query = {'size': 1000, 'sort' : [{'publishedAt' : {'order' : 'desc'}}]}
     
-    data = es.search(index="news-articles3", body=query)
+    data = es.search(index="news-articles", body=query)
     articles = data['hits']['hits']
    
     article_list = []
@@ -42,7 +42,7 @@ def display_news(es):
 def daily_sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-articles3', body=query)
+    data = es.search(index='news-articles', body=query)
  
     if data['hits']['hits'] == []:
         return 0
@@ -77,7 +77,7 @@ def daily_sent_analysis():
 def sent_analysis():
 
     query = {'size': 1000, 'query':{'match_all' : {}}}
-    data = es.search(index='news-articles3', body=query)
+    data = es.search(index='news-articles', body=query)
  
     if data['hits']['hits'] == []:
         return 0

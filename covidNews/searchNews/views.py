@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from elasticsearch import Elasticsearch
 from searchNews.documents import sent_analysis, daily_sent_analysis, display_news
 import os
-from elasticsearch import Elasticsearch
 
 def search_for_news(request):
 
