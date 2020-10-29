@@ -122,6 +122,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 CRONJOBS = [('*/3 * * * *','searchNews.cron.call_api', '>>/tmp/scheduled_job.log 2>&1')]
 
 # setup prefix to extract the secrets-specific env variables
