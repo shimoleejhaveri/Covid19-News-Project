@@ -87,9 +87,10 @@ def add_articles(response, es, fetched_at):
 
         dic_article['createdAt'] = datetime.now().isoformat()
         dic_article['fetchedAt'] = fetched_at
-    
-        text = extract_text(article['url'])
-        dic_article['content'] = text
+        
+        # The content has been removed for simplicity raison
+        # text = extract_text(article['url'])
+        # dic_article['content'] = text
         
         new_id = hashlib.md5(dic_article['url'].encode()).hexdigest() 
         print(dic_article['publishedAt'])
@@ -98,8 +99,8 @@ def add_articles(response, es, fetched_at):
         print('the result', a['result'])
 
 def seed_daily():
-    '''Add articles to Elasticsearch and predict sentiments'''
-
+    '''Create indices and populate the database'''
+    
     if not es.indices.exists(index="news-articles"):
         es.indices.create(index="news-articles", ignore=400) 
     
@@ -109,25 +110,28 @@ def seed_daily():
     last_fetched_at = str(dt.date().isoformat())
     new_fetched_at = str(datetime.utcnow().date())
 
+    # get the date of the last published article 
     query = {'size': 1, 'sort' : [{'publishedAt' : {'order' : 'desc', 'mode': 'max', 'unmapped_type' : 'keyword'}}]}
     data = es.search(index="news-articles", body=query)
-    last_published_at = data['hits']['hits'][0]['_source']['publishedAt']
+    max_published_at = datetime.fromisoformat(data['hits']['hits'][0]['_source']['publishedAt'])
+    last_published_at = str(max_published_at.date()) 
 
-    if last_fetched_at == last_published_at:   
-        response = call_news_api(last_fetched_at, new_fetched_at, key)
-        add_articles(response, es, new_fetched_at)
-        query = {'size': 2000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
-        data = es.search(index="news-articles", body=query)
-        predict_sentiment(data, es)
-    
-    else:
-        response = call_news_api(last_published_at, new_fetched_at, key)
-        add_articles(response, es, new_fetched_at)
+    if last_fetched_at > last_published_at: 
+        last_published_at = datetime.fromisoformat(last_published_at) + timedelta(days=1)
+        last_fetched_at = last_published_at
 
-        # predict sentiments
-        query = {'size': 10000, "query": {"range": {"publishedAt": {"from": last_published_at, "to": new_fetched_at}}}}      
-        data = es.search(index="news-articles", body=query)
-        predict_sentiment(data, es)
+    # call news api
+    response = call_news_api(last_fetched_at, new_fetched_at, key)
+
+    # add the articles to the elasticsearch
+    add_articles(response, es, new_fetched_at)
+
+    # predict sentiments
+    query = {'size': 10000, "query": {"range": {"publishedAt": {"from": last_fetched_at, "to": new_fetched_at}}}}      
+    data = es.search(index="news-articles", body=query)
+    print(len([d["_source"] for d in data['hits']['hits']]))  
+    predict_sentiment(data, es)
+
     
 
 if __name__ == '__main__':    
