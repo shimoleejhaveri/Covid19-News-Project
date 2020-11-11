@@ -8,11 +8,22 @@
 {% block body %}
 <!-- START: header -->
 <header role="banner" class="news-header">
-    <div class="container-fluid">
-        <div class="col-md-12 news-logo">Covid-19 News
-            <span class="line"></span>
-        </div>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand">Covid-19 News</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="about/">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Learn More</a>
+                </li>
+            </ul>
+    </nav>
 </header>
 <!-- END: header -->
 
@@ -23,6 +34,7 @@
 <!-- START: main -->
 <main>
     <div class="text-center" style="padding-top: 20px">
+        <span class="line"></span>
         <h4>How It Works</h4>
         <h6><p class="text-mute mb20">Our models are trained using headlines of news articles related to Covid-19 or coronavirus to calculate the sentiment behind them.</p></h6>
     </div>
@@ -62,16 +74,4 @@
     </section>
 </main>
 <!-- END: main -->
-
-<!-- START: footer -->
-<footer class="news-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 offset-5">
-                <p><a href="/about">Meet the Developers</a></p>
-            </div>
-        </div>
-    </div>
-</footer> 
-<!-- END: footer -->
 {% endblock %}
