@@ -51,20 +51,20 @@ p {
 a {
   -webkit-transition: .3s all;
   transition: .3s all;
-  color: #ff7676;
+  color: #000000;
 }
 
 a:active, a:focus, a:hover {
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
 }
 
 a.hover-reverse {
-  color: #000;
+  color: #000000;
 } 
 
 a.hover-reverse:active, a.hover-reverse:focus, a.hover-reverse:hover {
-  color: #ff7676;
+  color: #000000;
   text-decoration: none;
 }
 
@@ -94,10 +94,29 @@ a.article-title:hover {
 }
 
 .line {
+  padding-bottom: 15px;
   border-bottom: 5px solid #ccc;
   display: block;
 }
 
+.navbar-custom {
+  background-color: #f0f0f0;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url(data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E);
+  display: inline-block;
+  /*width: 1.5em;
+  height: 1.5em;*/
+  vertical-align: middle;
+  content: "";
+  background: no-repeat center center;
+  background-size: 100% 100%;
+  width: 35px;
+  height: 5px;
+  background-color: black;
+  margin: 6px 0;
+}
 
 .news-logo {
   padding-top: 10px;
@@ -117,7 +136,7 @@ a.article-title:hover {
   height: 30px;
 } 
 
-.dev {
+.dev-info {
   height: 200px;
 }
 
@@ -137,7 +156,7 @@ a.article-title:hover {
   z-index: 2;
 }
 
-.news-footer, .about-footer {
+/*.news-footer, .about-footer {
   padding: 3em 0;
   background: #000;
   position: relative;
@@ -157,4 +176,4 @@ a.article-title:hover {
     text-align: right;
     margin-top: 30px;
   }
-}
+}*/
