@@ -6,19 +6,47 @@
 {% endblock %}
 
 {% block body %}
-  <!-- START: header -->
-  <header role="banner" class="news-header">
-    <div class="container-fluid">
-      <div class="col-md-12 text-center news-logo">Sentiment Analysis of Covid-19 News
-      </div>
-    </div>
-  </header>
-  <!-- END: header -->
+<!-- START: header -->
+<header role="banner" class="news-header">
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand">Covid-19 News</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-  <!-- START: section -->
-  <section class="news-intro" style="background-image: url({% static 'news/img/img2.jpg' %});" data-stellar-background-ratio="0.5">
-  </section>
-  <!-- END: section -->
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="about/">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Learn More</a>
+                </li>
+            </ul>
+            <div class="input-group col-md-4">
+                <input class="form-control py-2" type="search" value="Search" id="example-search-input">
+                <span class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+          </div>
+    </nav>
+</header>
+<!-- END: header -->
+
+<!-- START: section -->
+<div class="news-intro"></div>
+<!-- END: section -->
+
+<!-- START: main -->
+<main>
+    <div class="text-center" style="padding-top: 20px">
+        <span class="line"></span>
+        <h4>How It Works</h4>
+        <h6><p class="text-mute mb20">Our models are trained using headlines of news articles related to Covid-19 or coronavirus to calculate the sentiment behind them.</p></h6>
+    </div>
 
   <!-- START: main -->
     <main>
@@ -53,18 +81,8 @@
             </div>
           {% endfor %}
         </div>
-      </section>
-    </main>
-    <!-- END: main -->
-
-    <!-- START: footer -->
-    <footer class="news-footer">
-      <div class="container">
-        <div class="row">
-          <p class="mb0 back-to-top"><a href="#" class="js-backtotop">Back to top</a></p>
-        </div>
-      </div>
-    </footer> 
-    <!-- END: footer -->
+    </section>
+</main>
+<!-- END: main -->
 
 {% endblock %}

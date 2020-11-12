@@ -22,9 +22,9 @@ http://covid19news.com/
 
 * ML libraries
   - Imblearn
-  - Pandas
   - Numpy
-  - Sklearn
+  - Pandas
+  - Scikit-learn
 
 ## <a name="api"></a>Third Party APIs
 * Diffbot Article API
@@ -79,7 +79,7 @@ pip install -r requirements.txt
 ```
 export API_KEY="YOUR_KEY_HERE"
 ```
-* Install Elasticsearch (Refer: <a target="_blank" href="https://medium.com/@shimoleejhaveri/setting-up-django-and-elasticsearch-in-vagrant-on-osx-596d27a6e9cd"> Setting Up Django and Elasticsearch in Vagrant on OSX </a>) 
+* Install Elasticsearch (Refer: <a target="_blank" href="https://medium.com/@shimoleejhaveri/setting-up-django-and-elasticsearch-in-vagrant-on-osx-596d27a6e9cd"> Setting Up Django and Elasticsearch in Vagrant on OSX</a>) 
 
 * Save your IP address in the <kbd>secrets.sh</kbd> file using this format:
 ```
