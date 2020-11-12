@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,13 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = '*eaei56p=3k!ubkb(wz-q-sp4ia-@%z(a!h^%vm*lffx2v6s#!'
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = '*eaei56p=3k!ubkb(wz-q-sp4ia-@%z(a!h^%vm*lffx2v6s#!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['covidanalysisnewsapp.herokuapp.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -121,18 +119,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
-CRONJOBS = [('*/3 * * * *','searchNews.cron.call_api', '>>/tmp/scheduled_job.log 2>&1')]
+CRONJOBS = [('*/10 * * * *','searchNews.cron.call_api', '>>/tmp/scheduled_job.log 2>&1')]
 
 # setup prefix to extract the secrets-specific env variables
 if os.path.exists('searchNews/secrets.sh'):
     with open('searchNews/secrets.sh') as secret_file:
         CRONTAB_COMMAND_PREFIX = " ".join([line.replace("export ", "").replace("\n", "") 
             for line in secret_file.readlines()])
-        
-django_heroku.settings(locals())

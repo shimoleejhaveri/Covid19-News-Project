@@ -15,12 +15,11 @@ html {
 }
 
 body {
-  background-color: #f0f0f0;
-  background-size: cover;
+  background: #fff;
   font-size: 16px;
   font-weight: 300;
   font-family: Rubik, sans-serif;
-  line-height: 1.8;
+  line-height: 1.8;color:#7e8890;
 }
 
 h1, h2, h3, h4, h5 {
@@ -55,7 +54,7 @@ a {
 }
 
 a:active, a:focus, a:hover {
-  color: #ffffff;
+  color: #000;
   text-decoration: none;
 }
 
@@ -82,44 +81,48 @@ a.article-title:hover {
 }
 
 .news-header {
-  /*padding-top: px;*/
-  font-family: Century Gothic, sans-serif;
-  /*padding-bottom: 30px;*/
+  padding-top: 30px;
+  padding-bottom: 30px;
   width: 100%;
   z-index: 4;
   position: absolute;
-  /*background: rgba(0,0,0,.15);*/
+  background: rgba(0,0,0,.15);
   -webkit-transition: .8s all ease-out;
   transition: .8s all ease-out;
 }
 
-.line {
-  border-bottom: 5px solid #ccc;
-  display: block;
+.news-header:active, .news-header:focus, .news-header:hover {
+  background: rgba(0,0,0,.55);
 }
 
-
 .news-logo {
-  padding-top: 10px;
-  font-size: 25px;
+  float: left;
+  color: #fff;
+  padding-left: 60px;
+  font-size: 20px;
   display: block;
   text-transform: uppercase;
   font-weight: 500;
 }
 
+.news-logo:active, .news-logo:focus, .news-logo:hover {
+  color: #fff;
+}
+
 @media screen and (max-width:768px) {
   .news-logo {
     padding-left: 0;
-  }
+    }
 }
 
 .news-intro {
-  height: 30px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  top: 0;
+  height: 800px;
+  overflow: hidden;
 } 
-
-.dev {
-  height: 200px;
-}
 
 .dev-img {
   background-size: 50%;
@@ -133,11 +136,12 @@ a.article-title:hover {
 }
 
 .news-section, .about-section {
+  padding: 5em 0;
   position: relative;
   z-index: 2;
 }
 
-.news-footer, .about-footer {
+.news-footer, .about-footer{
   padding: 3em 0;
   background: #000;
   position: relative;
@@ -149,12 +153,16 @@ a.article-title:hover {
 }
 
 .news-footer, .about-footer a:hover {
-  color: #ffffff !important;
+  color: #fff !important;
+}
+
+.news-footer .back-to-top, .about-footer .back-to-top {
+  text-align: center;
 }
 
 @media screen and (max-width:768px) {
-  .news-footer, .about-footer {
-    text-align: right;
+  .news-footer .back-to-top, .about-footer .back-to-top {
+    text-align: center;
     margin-top: 30px;
   }
 }
