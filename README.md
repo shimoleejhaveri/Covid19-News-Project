@@ -1,5 +1,5 @@
 # Covid-19 News
-![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img3.gif "Web App Design")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/tree/master/covidNews/searchNews/static/news/img/img1.gif "Web App Design")
 
 ## Deployment (TBD)
 http://covid19news.com/
@@ -36,7 +36,7 @@ http://covid19news.com/
 #### Main Page
 This is how the web app is displayed when user navigates to this website. The app is powered by Django and Elasticsearch. News articles related to Covid-19 are fetched from the News API by making requests to the endpoint every 3 minutes. The articles so retrieved are seeded into the Elasticsearch database. These articles are then used to run the machine learning model and perform sentiment analysis. The model is designed to calculate the sentiment every time the database is seeded with new articles in order to ensure that the users are provided with the latest information. These sentiment calculations are then rendered on the UI using charts.
 
-![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img1.gif "Landing Page")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img2.gif "Landing Page")
 
 #### Charts
 The charts are powered using the Charts.js JavaScript library. The metrics in the charts are populated with the sentiment analysis performed on the backend. The doughnut displays the overall statistics of the sentiments of all the news in the database. The line chart displays the daily statistics of the sentiment of news articles seeded into the database each day.
