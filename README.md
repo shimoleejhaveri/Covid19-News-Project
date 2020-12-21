@@ -1,5 +1,5 @@
 # Covid-19 News
-![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/tree/master/covidNews/searchNews/static/news/img/img1.gif "Web App Design")
+![alt text](https://github.com/shimoleejhaveri/Covid19-News-Project/blob/master/covidNews/searchNews/static/news/img/img1.gif "Web App Design")
 
 ## Deployment (TBD)
 http://covid19news.com/
